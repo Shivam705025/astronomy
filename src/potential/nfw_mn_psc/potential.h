@@ -17,8 +17,8 @@
  *
  ******************************************************************************/
 
-#ifndef SWIFT_POTENTIAL_NFW_MN_H
-#define SWIFT_POTENTIAL_NFW_MN_H
+#ifndef SWIFT_POTENTIAL_NFW_MN_PSC_H
+#define SWIFT_POTENTIAL_NFW_MN_PSC_H
 
 /* Config parameters. */
 #include <config.h>
