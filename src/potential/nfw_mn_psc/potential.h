@@ -36,11 +36,17 @@
 #include "space.h"
 #include "units.h"
 
+//Look at src/cosmology.c to see how they used/handled gsl
+#include <gsl/gsl_sf_gamma.h>
+
+
 /**
  * @brief External Potential Properties - NFW Potential + Miyamoto-Nagai
  *
  * halo --> rho(r) = rho_0 / ( (r/R_s)*(1+r/R_s)^2 )
  * disk --> phi(R,z) = -G * Mdisk / (R^2 + (Rdisk +  (z^2+Zdisk^2)^1/2)^2)^(1/2)
+ * bulge --> rho(r) = amplitude*(r_1/r)^alpha*exp(-(r/r_c)^2) (see the following
+ * url : https://docs.galpy.org/en/v1.8.0/reference/potentialpowerspherwcut.html)
  *
  * We however parameterise this in terms of c and virial_mass, Mdisk, Rdisk
  * and Zdisk
@@ -74,6 +80,18 @@ struct external_potential {
   /*! Disk Mass */
   double Mdisk;
 
+  /*! Amplitude for the PSC potential */
+  double amplitude;
+
+  /*! Reference radius for amplitude */
+  double r_1;
+
+  /*! Inner power */
+  double alpha;
+
+  /*! Cut-off radius */
+  double r_c ;
+
   /*! Time-step condition pre_factor, this factor is used to multiply times the
    * orbital time, so in the case of 0.01 we take 1% of the orbital time as
    * the time integration steps */
@@ -101,9 +119,9 @@ struct external_potential {
  * @param g Pointer to the g-particle data.
  */
 __attribute__((always_inline)) INLINE static float external_gravity_timestep(
-    double time, const struct external_potential* restrict potential,
-    const struct phys_const* restrict phys_const,
-    const struct gpart* restrict g) {
+	double time, const struct external_potential* restrict potential,
+	const struct phys_const* restrict phys_const,
+	const struct gpart* restrict g) {
 
   const float dx = g->x[0] - potential->x[0];
   const float dy = g->x[1] - potential->x[1];
@@ -113,15 +131,25 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
   const float r = sqrtf(R2 + dz * dz + potential->eps * potential->eps);
 
   const float mr = potential->M_200 *
-                   (logf(1.f + r / potential->r_s) - r / (r + potential->r_s)) /
-                   potential->log_c200_term;
+				   (logf(1.f + r / potential->r_s) - r / (r + potential->r_s)) /
+				   potential->log_c200_term;
 
   const float Vcirc_NFW = sqrtf((phys_const->const_newton_G * mr) / r);
   const float f1 =
-      potential->Rdisk + sqrtf(potential->Zdisk * potential->Zdisk + dz * dz);
+	  potential->Rdisk + sqrtf(potential->Zdisk * potential->Zdisk + dz * dz);
   const float Vcirc_MN = sqrtf(phys_const->const_newton_G * potential->Mdisk *
-                               R2 / pow(R2 + f1 * f1, 3.0 / 2.0));
-  const float Vcirc = sqrtf(Vcirc_NFW * Vcirc_NFW + Vcirc_MN * Vcirc_MN);
+							   R2 / pow(R2 + f1 * f1, 3.0 / 2.0));
+
+  /* Vcirc for PSC */
+  const float r2 = r*r;
+  const float M_psc = 2.0 * M_PI * potential->amplitude * pow(potential->r_c, 3. - potential->alpha)
+					  * ( gsl_sf_gamma(1.5 - 0.5 * potential->alpha)
+					- gsl_sf_gamma_inc(1.5 - 0.5 * potential->alpha, r2/potential->r_c/potential->r_c) );
+  const float Vcirc_PSC = sqrtf(phys_const->const_newton_G * M_psc / r) ;
+
+  /* Total circular velocity */
+  const float Vcirc = sqrtf(Vcirc_NFW * Vcirc_NFW + Vcirc_MN * Vcirc_MN
+							+ Vcirc_PSC * Vcirc_PSC);
 
   const float period = 2 * M_PI * r / Vcirc;
 
@@ -133,14 +161,16 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
 
 /**
  * @brief Computes the gravitational acceleration from an NFW Halo potential +
- * MN disk.
+ * MN disk + PSC bulge.
  *
  * Note that the accelerations are multiplied by Newton's G constant
  * later on.
  *
+ * UPDATE HERE
  * a_x = 4 pi \rho_0 r_s^3 ( 1/((r+rs)*r^2) - log(1+r/rs)/r^3) * x
  * a_y = 4 pi \rho_0 r_s^3 ( 1/((r+rs)*r^2) - log(1+r/rs)/r^3) * y
  * a_z = 4 pi \rho_0 r_s^3 ( 1/((r+rs)*r^2) - log(1+r/rs)/r^3) * z
+ *
  *
  * @param time The current time.
  * @param potential The #external_potential used in the run.
@@ -148,8 +178,8 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
  * @param g Pointer to the g-particle data.
  */
 __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
-    double time, const struct external_potential* restrict potential,
-    const struct phys_const* restrict phys_const, struct gpart* restrict g) {
+	double time, const struct external_potential* restrict potential,
+	const struct phys_const* restrict phys_const, struct gpart* restrict g) {
 
   const float dx = g->x[0] - potential->x[0];
   const float dy = g->x[1] - potential->x[1];
@@ -161,11 +191,11 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
   const float r_inv = 1.f / r;
   const float term1 = potential->pre_factor;
   const float term2 =
-      r / (r + potential->r_s) - logf(1.0f + r / potential->r_s);
+	  r / (r + potential->r_s) - logf(1.0f + r / potential->r_s);
 
   const float acc_nfw = term1 * term2 * r_inv * r_inv * r_inv;
   const float pot_nfw =
-      -potential->pre_factor * logf(1.0f + r / potential->r_s) * r_inv;
+	  -potential->pre_factor * logf(1.0f + r / potential->r_s) * r_inv;
 
   g->a_grav[0] += acc_nfw * dx;
   g->a_grav[1] += acc_nfw * dy;
@@ -183,6 +213,24 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
   g->a_grav[1] -= potential->Mdisk * f3 * dy;
   g->a_grav[2] -= potential->Mdisk * f3 * (f2 / f1) * dz;
   gravity_add_comoving_potential(g, pot_mn);
+
+  /* Now the the PSC bulge */
+  const float r2 = r*r;
+  const float M_psc = 2.0 * M_PI * potential->amplitude * pow(potential->r_c, 3. - potential->alpha)
+					  * ( gsl_sf_gamma(1.5 - 0.5 * potential->alpha)
+					- gsl_sf_gamma_inc(1.5 - 0.5 * potential->alpha, r2/potential->r_c/potential->r_c) );
+  const float dpot_dr = M_psc/r2;
+  const float pot_psc = potential->amplitude * 2. * M_PI * pow(potential->r_c,3.-potential->alpha) / r
+						* ( r/potential->r_c * ( gsl_sf_gamma( 1. - 0.5 * potential->alpha)
+						- gsl_sf_gamma_inc(1. - 0.5 * potential->alpha, r2 / potential->r_c/potential->r_c) )
+						- ( gsl_sf_gamma( 1.5 - 0.5 * potential->alpha )
+						- gsl_sf_gamma_inc( 1.5 - 0.5 * potential->alpha, r2/potential->r_c/potential->r_c) ) );
+
+
+  g->a_grav[0] -= dpot_dr*dx*r_inv;
+  g->a_grav[1] -= dpot_dr*dy*r_inv;
+  g->a_grav[2] -= dpot_dr*dz*r_inv;
+  gravity_add_comoving_potential(g, pot_psc);
 }
 
 /**
@@ -199,8 +247,8 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
  */
 __attribute__((always_inline)) INLINE static float
 external_gravity_get_potential_energy(
-    double time, const struct external_potential* potential,
-    const struct phys_const* const phys_const, const struct gpart* g) {
+	double time, const struct external_potential* potential,
+	const struct phys_const* const phys_const, const struct gpart* g) {
 
   const float dx = g->x[0] - potential->x[0];
   const float dy = g->x[1] - potential->x[1];
@@ -216,7 +264,15 @@ external_gravity_get_potential_energy(
   const float mn_term = potential->Rdisk + sqrtf(potential->Zdisk + dz * dz);
   const float mn_pot = -potential->Mdisk / sqrtf(R2 + mn_term * mn_term);
 
-  return phys_const->const_newton_G * (term1 * term2 + mn_pot);
+  /* Now for PSC bulge */
+  const float r2 = r*r;
+  const float psc_pot = potential->amplitude * 2. * M_PI * pow(potential->r_c,3.-potential->alpha) / r
+						* ( r / potential->r_c * ( gsl_sf_gamma ( 1. - 0.5 * potential->alpha )
+						- gsl_sf_gamma_inc ( 1. - 0.5 * potential->alpha , r2 / potential->r_c / potential->r_c ) )
+						- ( gsl_sf_gamma ( 1.5 - 0.5 * potential->alpha )
+						- gsl_sf_gamma_inc ( 1.5 - 0.5 * potential->alpha , r2 / potential->r_c / potential->r_c) ) );
+
+  return phys_const->const_newton_G * (term1 * term2 + mn_pot + psc_pot);
 }
 
 /**
@@ -229,45 +285,53 @@ external_gravity_get_potential_energy(
  * @param potential The external potential properties to initialize
  */
 static INLINE void potential_init_backend(
-    struct swift_params* parameter_file, const struct phys_const* phys_const,
-    const struct unit_system* us, const struct space* s,
-    struct external_potential* potential) {
+	struct swift_params* parameter_file, const struct phys_const* phys_const,
+	const struct unit_system* us, const struct space* s,
+	struct external_potential* potential) {
 
   /* Read in the position of the centre of potential */
-  parser_get_param_double_array(parameter_file, "NFW_MNPotential:position", 3,
-                                potential->x);
+  parser_get_param_double_array(parameter_file, "NFW_MN_PSCPotential:position", 3,
+								potential->x);
 
   /* Is the position absolute or relative to the centre of the box? */
   const int useabspos =
-      parser_get_param_int(parameter_file, "NFW_MNPotential:useabspos");
+	  parser_get_param_int(parameter_file, "NFW_MN_PSCPotential:useabspos");
 
   if (!useabspos) {
-    potential->x[0] += s->dim[0] / 2.;
-    potential->x[1] += s->dim[1] / 2.;
-    potential->x[2] += s->dim[2] / 2.;
+	potential->x[0] += s->dim[0] / 2.;
+	potential->x[1] += s->dim[1] / 2.;
+	potential->x[2] += s->dim[2] / 2.;
   }
 
   /* Read the other parameters of the model */
   potential->timestep_mult =
-      parser_get_param_double(parameter_file, "NFW_MNPotential:timestep_mult");
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:timestep_mult");
   potential->c_200 =
-      parser_get_param_double(parameter_file, "NFW_MNPotential:concentration");
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:concentration");
   potential->M_200 =
-      parser_get_param_double(parameter_file, "NFW_MNPotential:M_200");
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:M_200");
   potential->rho_c = parser_get_param_double(
-      parameter_file, "NFW_MNPotential:critical_density");
+	  parameter_file, "NFW_MN_PSCPotential:critical_density");
   potential->Mdisk =
-      parser_get_param_double(parameter_file, "NFW_MNPotential:Mdisk");
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:Mdisk");
   potential->Rdisk =
-      parser_get_param_double(parameter_file, "NFW_MNPotential:Rdisk");
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:Rdisk");
   potential->Zdisk =
-      parser_get_param_double(parameter_file, "NFW_MNPotential:Zdisk");
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:Zdisk");
+  potential->amplitude =
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:amplitude");
+  potential->r_1 =
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:r_1");
+  potential->alpha =
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:alpha");
+  potential->r_c =
+	  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:r_c");
 
   potential->eps = 0.05;
 
   /* Compute R_200 */
   const double R_200 =
-      cbrtf(3.0 * potential->M_200 / (4. * M_PI * 200.0 * potential->rho_c));
+	  cbrtf(3.0 * potential->M_200 / (4. * M_PI * 200.0 * potential->rho_c));
 
   /* NFW scale-radius */
   potential->r_s = R_200 / potential->c_200;
@@ -275,10 +339,10 @@ static INLINE void potential_init_backend(
 
   /* Log(c_200) term appearing in many expressions */
   potential->log_c200_term =
-      log(1. + potential->c_200) - potential->c_200 / (1. + potential->c_200);
+	  log(1. + potential->c_200) - potential->c_200 / (1. + potential->c_200);
 
   const double rho_0 =
-      potential->M_200 / (4.f * M_PI * r_s3 * potential->log_c200_term);
+	  potential->M_200 / (4.f * M_PI * r_s3 * potential->log_c200_term);
 
   /* Pre-factor for the accelerations (note G is multiplied in later on) */
   potential->pre_factor = 4.0f * M_PI * rho_0 * r_s3;
@@ -286,11 +350,11 @@ static INLINE void potential_init_backend(
   /* Compute the orbital time at the softening radius */
   const double sqrtgm = sqrt(phys_const->const_newton_G * potential->M_200);
   const double epslnthing = log(1.f + potential->eps / potential->r_s) -
-                            potential->eps / (potential->eps + potential->r_s);
+							potential->eps / (potential->eps + potential->r_s);
 
   potential->mintime = 2. * M_PI * potential->eps * sqrtf(potential->eps) *
-                       sqrtf(potential->log_c200_term / epslnthing) / sqrtgm *
-                       potential->timestep_mult;
+					   sqrtf(potential->log_c200_term / epslnthing) / sqrtgm *
+					   potential->timestep_mult;
 }
 
 /**
@@ -299,13 +363,14 @@ static INLINE void potential_init_backend(
  * @param  potential The external potential properties.
  */
 static INLINE void potential_print_backend(
-    const struct external_potential* potential) {
+	const struct external_potential* potential) {
 
   message(
-      "External potential is 'NFW + MN disk' with properties are (x,y,z) = "
-      "(%e, %e, %e), scale radius = %e timestep multiplier = %e, mintime = %e",
-      potential->x[0], potential->x[1], potential->x[2], potential->r_s,
-      potential->timestep_mult, potential->mintime);
+	  "External potential is 'NFW + MN disk + PSC bulge' with properties are (x,y,z) = "
+	  "(%e, %e, %e), scale radius = %e power exponent = %e cut-off = %e timestep "
+	  "multiplier = %e mintime = %e",
+	  potential->x[0], potential->x[1], potential->x[2], potential->r_s,
+	  potential->alpha, potential->r_c, potential->timestep_mult, potential->mintime);
 }
 
 #endif /* SWIFT_POTENTIAL_NFW_MN_H */
