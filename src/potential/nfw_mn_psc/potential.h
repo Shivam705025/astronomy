@@ -36,9 +36,9 @@
 #include "space.h"
 #include "units.h"
 
-//Look at src/cosmology.c to see how they used/handled gsl
+#ifdef HAVE_LIBGSL
 #include <gsl/gsl_sf_gamma.h>
-
+#endif
 
 /**
  * @brief External Potential Properties - NFW Potential + Miyamoto-Nagai + Power
