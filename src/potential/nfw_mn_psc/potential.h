@@ -351,7 +351,7 @@ static INLINE void potential_init_backend(
 		  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:alpha");
 	  potential->r_c =
 		  parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:r_c");
-	  parser_get_param_double_array(parameter_file, "InitialConditions:potential_factors", 3, potential->f);
+	  parser_get_param_double_array(parameter_file, "NFW_MN_PSCPotential:potential_factors", 3, potential->f);
   }
   potential->eps = 0.05;
 
