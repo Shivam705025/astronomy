@@ -150,7 +150,7 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
   /* Now for MN */
   const float R = sqrtf(R2);
   const float sqrt_term = sqrtf(dz*dz + potential->Zdisk*potential->Zdisk);
-  const float MN_denominator = powf( R2 + powf( potential->Rdisk + sqrt_term, 2.0 ) , 1.5 ) ;
+  const float MN_denominator = powf( R2 + powf( potential->Rdisk + sqrt_term, 2.0f ) , 1.5f ) ;
   const float dPhi_dR_MN = potential->Mdisk * R / MN_denominator;
   const float dPhi_dz_MN = potential->Mdisk * dz * (potential->Rdisk + sqrt_term)
 						   / (sqrt_term * MN_denominator);
@@ -160,7 +160,7 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
   /* Now for PSC */
   const float r2 = r*r;
   const float M_psc = potential->prefactor_psc_1 * (potential->gamma_psc
-					- gsl_sf_gamma_inc(1.5 - 0.5*potential->alpha, r2/(potential->r_c*potential->r_c) ) ) ;
+					- gsl_sf_gamma_inc(1.5f - 0.5f*potential->alpha, r2/(potential->r_c*potential->r_c) ) ) ;
   const float Vcirc_PSC = sqrtf(phys_const->const_newton_G * M_psc / r) ;
 
   /* Total circular velocity */
@@ -168,7 +168,7 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
 							+ potential->f[1] * Vcirc_MN * Vcirc_MN
 							+ potential->f[2] * Vcirc_PSC * Vcirc_PSC);
 
-  const float period = 2 * M_PI * r / Vcirc;
+  const float period = 2.0f * M_PI * r / Vcirc;
 
   /* Time-step as a fraction of the circular period */
   const float time_step = potential->timestep_mult * period;
@@ -205,7 +205,7 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
   /* First for the NFW part */
   const float R2 = dx * dx + dy * dy;
   const float r = sqrtf(R2 + dz * dz + potential->eps * potential->eps);
-  const float r_inv = 1.f / r;
+  const float r_inv = 1.0f / r;
   const float M_NFW = potential->pre_factor * (logf(1.0f+r/potential->r_s) - r/(r+potential->r_s) ) ;
   const float dpot_dr_NFW = M_NFW*r_inv ;
   const float pot_nfw = -potential->pre_factor * logf(1.0f + r / potential->r_s) * r_inv;
@@ -216,25 +216,23 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
   gravity_add_comoving_potential(g, potential->f[0] * pot_nfw);
 
   /* Now the the MN disk */
-  const float R = sqrtf(R2);
-  const float sqrt_term = sqrtf(dz*dz + potential->Zdisk*potential->Zdisk);
-  const float MN_denominator = sqrtf( R2 + powf( potential->Rdisk + sqrt_term, 2.0 ) ) ;
-  const float dPhi_dR_MN = potential->Mdisk * R / MN_denominator;
-  const float dPhi_dz_MN = potential->Mdisk * dz * (potential->Rdisk + sqrt_term)
-						   / (sqrt_term * MN_denominator);
-  const float pot_mn = -potential->Mdisk / MN_denominator;
+  const float f1 = sqrtf(potential->Zdisk * potential->Zdisk + dz * dz);
+  const float f2 = potential->Rdisk + f1;
+  const float f3 = powf(R2 + f2 * f2, -1.5f);
+  const float mn_term = potential->Rdisk + sqrtf(potential->Zdisk + dz * dz);
+  const float pot_mn = -potential->Mdisk / sqrtf(R2 + mn_term * mn_term);
 
-  g->a_grav[0] -= potential->f[1] * dPhi_dR_MN * dx / R;
-  g->a_grav[1] -= potential->f[1] * dPhi_dR_MN * dy / R;
-  g->a_grav[2] -= potential->f[1] * dPhi_dz_MN;
+  g->a_grav[0] -= potential->f[1] * potential->Mdisk * f3 * dx;
+  g->a_grav[1] -= potential->f[1] * potential->Mdisk * f3 * dy;
+  g->a_grav[2] -= potential->f[1] * potential->Mdisk * f3 * (f2 / f1) * dz;
   gravity_add_comoving_potential(g, potential->f[1] * pot_mn);
 
   /* Now the the PSC bulge */
   const float r2 = r*r;
   const float M_psc = potential->prefactor_psc_1 * (potential->gamma_psc
-					- gsl_sf_gamma_inc(1.5 - 0.5*potential->alpha, r2/(potential->r_c*potential->r_c) ) ) ;
+					- gsl_sf_gamma_inc(1.5f - 0.5f*potential->alpha, r2/(potential->r_c*potential->r_c) ) ) ;
   const float dpot_dr = M_psc/r2;
-  const float pot_psc = - M_psc/r - potential->prefactor_psc_2 * gsl_sf_gamma_inc(1.0 - 0.5 * potential->alpha, r2/(potential->r_c*potential->r_c) ) ;
+  const float pot_psc = - M_psc/r - potential->prefactor_psc_2 * gsl_sf_gamma_inc(1.0f - 0.5f * potential->alpha, r2/(potential->r_c*potential->r_c) ) ;
 
   g->a_grav[0] -= potential->f[2] * dpot_dr*dx*r_inv;
   g->a_grav[1] -= potential->f[2] * dpot_dr*dy*r_inv;
@@ -266,25 +264,20 @@ external_gravity_get_potential_energy(
   /* First for the NFW profile */
   const float R2 = dx * dx + dy * dy;
   const float r = sqrtf(R2 + dz * dz + potential->eps * potential->eps);
-  const float r_inv = 1.f / r;
-//  const float term1 = -potential->pre_factor / r;
-//  const float term2 = logf(1.0f + r / potential->r_s);
+  const float r_inv = 1.0f / r;
   const float pot_nfw = -potential->pre_factor * logf(1.0f + r / potential->r_s) * r_inv;
 
   /* Now for the MN disk */
-//  const float mn_term = potential->Rdisk + sqrtf(potential->Zdisk + dz * dz);
-//  const float mn_pot = -potential->Mdisk / sqrtf(R2 + mn_term * mn_term);
-  const float sqrt_term = sqrtf(dz*dz + potential->Zdisk*potential->Zdisk);
-  const float MN_denominator = sqrtf( R2 + powf( potential->Rdisk + sqrt_term, 2.0 ) ) ;
+ const float sqrt_term = sqrtf(dz*dz + potential->Zdisk*potential->Zdisk);
+  const float MN_denominator = sqrtf( R2 + powf( potential->Rdisk + sqrt_term, 2.0f ) ) ;
   const float mn_pot = -potential->Mdisk / MN_denominator;
 
   /* Now for PSC bulge */
   const float r2 = r*r;
   const float M_psc = potential->prefactor_psc_1 * (potential->gamma_psc
-					- gsl_sf_gamma_inc(1.5 - 0.5*potential->alpha, r2/(potential->r_c*potential->r_c) ) ) ;
-  const float psc_pot = - M_psc/r - potential->prefactor_psc_2 * gsl_sf_gamma_inc(1 - 0.5 * potential->alpha, r2/(potential->r_c*potential->r_c) ) ;
+					- gsl_sf_gamma_inc(1.5f - 0.5f*potential->alpha, r2/(potential->r_c*potential->r_c) ) ) ;
+  const float psc_pot = - M_psc/r - potential->prefactor_psc_2 * gsl_sf_gamma_inc(1.0f - 0.5f * potential->alpha, r2/(potential->r_c*potential->r_c) ) ;
 
-//  return phys_const->const_newton_G * (potential->f[0] * term1 * term2
   return phys_const->const_newton_G * (potential->f[0] * pot_nfw
 										+ potential->f[1] * mn_pot
 										+ potential->f[2] * psc_pot);
@@ -408,7 +401,7 @@ static INLINE void potential_init_backend(
 
   /* Compute the orbital time at the softening radius */
   const double sqrtgm = sqrt(phys_const->const_newton_G * potential->M_200);
-  const double epslnthing = log(1.f + potential->eps / potential->r_s) -
+  const double epslnthing = log(1.0 + potential->eps / potential->r_s) -
 							potential->eps / (potential->eps + potential->r_s);
 
   potential->mintime = 2. * M_PI * potential->eps * sqrtf(potential->eps) *
