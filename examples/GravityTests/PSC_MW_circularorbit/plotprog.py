@@ -39,7 +39,7 @@ yy = np.zeros((numbpar, lengthrun))
 zz = np.zeros((numbpar, lengthrun))
 time = np.zeros(lengthrun)
 for i in range(0, lengthrun):
-    Data = h5py.File("output_%04d.hdf5" % i, "r")
+    Data = h5py.File("output/output_%04d.hdf5" % i, "r")
     header = Data["Header"]
     time[i] = header.attrs["Time"]
     particles = Data["PartType1"]

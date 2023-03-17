@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm output_*
+rm output/output_*
 rm xyplot.png xzplot.png yzplot.png
 # if [ ! -e circular_orbits_MW.hdf5 ]
 # then
