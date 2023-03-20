@@ -207,9 +207,8 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
   const float r = sqrtf(R2 + dz * dz + potential->eps * potential->eps);
   const float r_inv = 1.0f / r;
   const float M_NFW = potential->pre_factor * (logf(1.0f+r/potential->r_s) - r/(r+potential->r_s) ) ;
-  const float dpot_dr_NFW = M_NFW*r_inv ;
+  const float dpot_dr_NFW = M_NFW*r_inv*r_inv ;
   const float pot_nfw = -potential->pre_factor * logf(1.0f + r / potential->r_s) * r_inv;
-
   g->a_grav[0] -= potential->f[0] * dpot_dr_NFW*dx*r_inv;
   g->a_grav[1] -= potential->f[0] * dpot_dr_NFW*dy*r_inv;
   g->a_grav[2] -= potential->f[0] * dpot_dr_NFW*dz*r_inv;
