@@ -27,14 +27,16 @@ pos = np.zeros((3, 3))
 pos[0, 2] = 5.0
 pos[1, 1] = 5.0
 pos[2, 0] = 30.0
-pos += np.array([box_size/2, box_size/2, box_size/2]) #shifts the particles to the center of the box
+pos += np.array(
+    [box_size / 2, box_size / 2, box_size / 2]
+)  # shifts the particles to the center of the box
 vel = np.zeros((3, 3))
 vel[0, 0] = 300.16375432528355
 vel[1, 0] = 311.3726272006567
 vel[2, 1] = 163.3158823034422
 
 ids = np.array([1.0, 2.0, 3.0])
-mass = np.array([1.0, 1.0, 1.0])*1e-10
+mass = np.array([1.0, 1.0, 1.0]) * 1e-10
 
 # File
 file = h5.File("circular_orbits_MW.hdf5", "w")
@@ -42,7 +44,7 @@ file = h5.File("circular_orbits_MW.hdf5", "w")
 # Units
 grp = file.create_group("/Units")
 grp.attrs["Unit length in cgs (U_L)"] = 3.086e21
-grp.attrs["Unit mass in cgs (U_M)"] = 1.98848e+43
+grp.attrs["Unit mass in cgs (U_M)"] = 1.98848e43
 grp.attrs["Unit time in cgs (U_t)"] = 3.086e16
 grp.attrs["Unit current in cgs (U_I)"] = 1.0
 grp.attrs["Unit temperature in cgs (U_T)"] = 1.0
