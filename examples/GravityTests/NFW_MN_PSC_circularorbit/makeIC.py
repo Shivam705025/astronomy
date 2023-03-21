@@ -16,12 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ################################################################################
-# from galpy.potential import NFWPotential
-# from galpy.orbit import Orbit
-# from galpy.util import bovy_conversion
 import numpy as np
-# import matplotlib.pyplot as plt
-# from astropy import units
 import h5py as h5
 
 box_size = 1000.0
