@@ -53,6 +53,10 @@ col = ["b", "r", "c", "y", "k"]
 for i in range(0, numbpar):
     plt.plot(xx[i, :], yy[i, :], col[i])
 
+ax = plt.gca()
+ax.set_aspect('equal', 'box')
+plt.xlim([-35,35])
+plt.ylim([-35,35])
 plt.ylabel("y (kpc)")
 plt.xlabel("x (kpc)")
 plt.savefig("xyplot.png")
@@ -62,6 +66,10 @@ plt.close()
 for i in range(0, numbpar):
     plt.plot(xx[i, :], zz[i, :], col[i])
 
+ax = plt.gca()
+ax.set_aspect('equal', 'box')
+plt.xlim([-35,35])
+plt.ylim([-35,35])
 plt.ylabel("z (kpc)")
 plt.xlabel("x (kpc)")
 plt.savefig("xzplot.png")
@@ -70,6 +78,10 @@ plt.close()
 for i in range(0, numbpar):
     plt.plot(yy[i, :], zz[i, :], col[i])
 
+ax = plt.gca()
+ax.set_aspect('equal', 'box')
+plt.xlim([-35,35])
+plt.ylim([-35,35])
 plt.ylabel("z (kpc)")
 plt.xlabel("y (kpc)")
 plt.savefig("yzplot.png")
