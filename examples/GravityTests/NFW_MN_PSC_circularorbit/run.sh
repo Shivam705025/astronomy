@@ -29,7 +29,7 @@ fi
 #Saves the plots
 echo "Save plots of the circular orbits"
 if command -v python3 &>/dev/null; then
-    python3 makePlot.py
+    python3 makePlots.py
 else 
-    python3 makePlot.py
+    python3 makePlots.py
 fi
