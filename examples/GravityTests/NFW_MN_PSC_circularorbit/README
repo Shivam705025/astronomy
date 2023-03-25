@@ -1,0 +1,19 @@
+# Context
+
+# How to run this example
+
+In a terminal within this directory, type:
+
+`../../../autogen.sh`
+
+Then, configure swift to take into account external potentials. Type:
+
+`../../../configure --with-ext-potential=nfw-mn-psc`
+
+Feel free to adapt other configurations parameters depending on your system.
+
+Finally, to run this example, type:
+
+`./run.sh`
+
+**TO BE TESTED**
