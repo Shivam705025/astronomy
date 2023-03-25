@@ -12,7 +12,16 @@ else
 fi
 
 #Clears the previous figures
-rm xyplot.png xzplot.png yzplot.png
+echo "Clearing existing figures."
+if [ -f "circular_orbits.png" ];
+then
+    rm circular_orbits.png
+fi
+
+if [ -f "errors.png" ];
+then
+    rm errors.png
+fi
 
 #Generates the initial conditions
 echo "Generate initial conditions for circular orbits"
@@ -24,10 +33,13 @@ fi
 
 #Runs the simulation
 # self gravity G, external potential g, hydro s, threads t and high verbosity v
-../../../swift --external-gravity --threads=8 nfw_mn_psc_circular_orbits.yml 2>&1 | tee output.log
+# ../../../swift --external-gravity --threads=8 nfw_mn_psc_circular_orbits.yml 2>&1 | tee output.log
+echo "Starting the simulation... Look at output.log for the simulation details."
+../../../swift --external-gravity --threads=8 nfw_mn_psc_circular_orbits.yml 2>&1 > output.log
+echo "Simulation ended."
 
 #Saves the plots
-echo "Save plots of the circular orbits"
+echo "Save plots of the circular orbits and of the errors"
 if command -v python3 &>/dev/null; then
     python3 makePlots.py
 else 
