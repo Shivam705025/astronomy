@@ -29,7 +29,6 @@ G = 4.300927e-06
 M = 1e15
 GM = G * M
 
-
 lengthrun = 2001
 numbpar = 3
 
@@ -51,7 +50,7 @@ for i in range(0, lengthrun):
 col = ["b", "r", "c", "y", "k"]
 
 #Plots the orbits
-fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 5), layout="tight")
+fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 4), layout="tight")
 for i in range(0, numbpar):
     ax[0].plot(xx[i, :], yy[i, :], col[i])
 
@@ -80,4 +79,30 @@ ax[2].set_ylim([-35,35])
 ax[2].set_ylabel("z (kpc)")
 ax[2].set_xlabel("y (kpc)")
 plt.savefig("circular_orbits.png")
+plt.close()
+
+#%%
+#Plot of the deviation from circular orbit
+R_1_th = 5.0 #kpc
+R_2_th = 5.0 #kpc
+R_3_th = 30.0 #kpc
+
+fig2, ax2 = plt.subplots(nrows=1, ncols=2, num=3, figsize=(12, 4.3), layout="tight")
+
+#Gather the x,y and z components of each particule into one array
+pos_1 = np.array([xx[0, :], yy[0, :], zz[0, :]])
+pos_2 = np.array([xx[1, :], yy[1, :], zz[1, :]])
+pos_3 = np.array([xx[2, :], yy[2, :], zz[2, :]])
+
+#Compute the radii
+r_1 = np.linalg.norm(pos_1, axis=0) ; error_1 = np.abs(r_1 - R_1_th)/R_1_th*100
+r_2 = np.linalg.norm(pos_2, axis=0) ; error_2 = np.abs(r_2 - R_2_th)/R_2_th*100
+r_3 = np.linalg.norm(pos_3, axis=0) ; error_3 = np.abs(r_3 - R_3_th)/R_3_th*100
+
+ax2[0].plot(error_1, col[0])
+ax2[1].plot(error_2, col[1])
+ax2[1].plot(error_3, col[2])
+ax2[0].set_ylabel("Error (%)") ; ax2[0].set_xlabel("Snapshot number")
+ax2[1].set_ylabel("Error (%)") ; ax2[1].set_xlabel("Snapshot number")
+plt.savefig("errors.png")
 plt.close()
