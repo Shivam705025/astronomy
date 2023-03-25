@@ -50,39 +50,34 @@ for i in range(0, lengthrun):
 
 col = ["b", "r", "c", "y", "k"]
 
+#Plots the orbits
+fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 5), layout="tight")
 for i in range(0, numbpar):
-    plt.plot(xx[i, :], yy[i, :], col[i])
+    ax[0].plot(xx[i, :], yy[i, :], col[i])
 
-ax = plt.gca()
-ax.set_aspect('equal', 'box')
-plt.xlim([-35,35])
-plt.ylim([-35,35])
-plt.ylabel("y (kpc)")
-plt.xlabel("x (kpc)")
-plt.savefig("xyplot.png")
-plt.close()
+ax[0].set_aspect('equal', 'box')
+ax[0].set_xlim([-35,35])
+ax[0].set_ylim([-35,35])
+ax[0].set_ylabel("y (kpc)")
+ax[0].set_xlabel("x (kpc)")
 
-
-for i in range(0, numbpar):
-    plt.plot(xx[i, :], zz[i, :], col[i])
-
-ax = plt.gca()
-ax.set_aspect('equal', 'box')
-plt.xlim([-35,35])
-plt.ylim([-35,35])
-plt.ylabel("z (kpc)")
-plt.xlabel("x (kpc)")
-plt.savefig("xzplot.png")
-plt.close()
 
 for i in range(0, numbpar):
-    plt.plot(yy[i, :], zz[i, :], col[i])
+    ax[1].plot(xx[i, :], zz[i, :], col[i])
 
-ax = plt.gca()
-ax.set_aspect('equal', 'box')
-plt.xlim([-35,35])
-plt.ylim([-35,35])
-plt.ylabel("z (kpc)")
-plt.xlabel("y (kpc)")
-plt.savefig("yzplot.png")
+ax[1].set_aspect('equal', 'box')
+ax[1].set_xlim([-35,35])
+ax[1].set_ylim([-35,35])
+ax[1].set_ylabel("z (kpc)")
+ax[1].set_xlabel("x (kpc)")
+
+for i in range(0, numbpar):
+    ax[2].plot(yy[i, :], zz[i, :], col[i])
+
+ax[2].set_aspect('equal', 'box')
+ax[2].set_xlim([-35,35])
+ax[2].set_ylim([-35,35])
+ax[2].set_ylabel("z (kpc)")
+ax[2].set_xlabel("y (kpc)")
+plt.savefig("circular_orbits.png")
 plt.close()
