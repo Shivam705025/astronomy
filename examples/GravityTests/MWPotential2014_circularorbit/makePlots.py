@@ -20,7 +20,8 @@
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
-from scipy.integrate import odeint
+import pickle 
+# from scipy.integrate import odeint
 
 t = np.linspace(0, 40, 100000)
 y0 = [0, 10]
@@ -50,7 +51,10 @@ for i in range(0, lengthrun):
 col = ["b", "r", "c", "y", "k"]
 
 #Plots the orbits
-fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 4), layout="tight")
+fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 4.1), layout="tight")
+fig.suptitle("Orbits", fontsize=15)
+ax[0].clear() ; ax[1].clear()
+
 for i in range(0, numbpar):
     ax[0].plot(xx[i, :], yy[i, :], col[i])
 
@@ -80,7 +84,7 @@ ax[2].set_ylim([-35,35])
 ax[2].set_ylabel("z (kpc)")
 ax[2].set_xlabel("y (kpc)")
 plt.savefig("circular_orbits.png")
-# plt.close()
+plt.close()
 
 #%%
 #Plot of the deviation from circular orbit
@@ -88,7 +92,9 @@ R_1_th = 5.0 #kpc
 R_2_th = 5.0 #kpc
 R_3_th = 30.0 #kpc
 
-fig2, ax2 = plt.subplots(nrows=1, ncols=2, num=3, figsize=(12, 4.3), layout="tight")
+fig2, ax2 = plt.subplots(nrows=1, ncols=2, num=2, figsize=(12, 4.5), layout="tight")
+fig2.suptitle("Deviation from circular orbit", fontsize=15)
+ax2[0].clear() ; ax2[1].clear()
 
 #Gather the x,y and z components of each particule into one array
 pos_1 = np.array([xx[0, :], yy[0, :], zz[0, :]])
@@ -109,7 +115,39 @@ ax2[0].legend(["Particule 1, $R = 5$ kpc"])
 ax2[1].legend(["Particule 2, $R = 5$ kpc", "Particule 3, $R = 30$ kpc"])
 
 plt.savefig("deviation.png")
-# plt.close()
+plt.close()
 
-#%%Saves our data as a reference and make a comparison with the obtained data and ours
+#%%Make a comparison with the obtained data and ours to check nothing is broken
 #Then delete the code to save the reference data
+
+filename = "original_radii.pkl" #Original data
+# with open(filename, "wb") as file:
+#     pickle.dump(np.array([r_1, r_2, r_3]), file)
+#     # pickle.dump(r_2, file)
+#     # pickle.dump(r_3, file)
+
+with open(filename, "rb") as file:
+    radii_original = pickle.load(file)
+r_1_exp = radii_original[0, :] #exp stands for "experimental"
+r_2_exp = radii_original[1, :]
+r_3_exp = radii_original[2, :]
+
+fig3, ax3 = plt.subplots(nrows=1, ncols=3, num=3, figsize=(12, 4.3), layout="tight")
+fig3.suptitle("Deviation from the original data", fontsize=15)
+ax3[0].clear() ; ax3[1].clear() ; ax3[2].clear() 
+
+error_1 = np.abs(r_1 - r_1_exp)/r_1_exp*100 
+error_2 = np.abs(r_2 - r_2_exp)/r_2_exp*100 
+error_3 = np.abs(r_3 - r_3_exp)/r_3_exp*100 
+
+ax3[0].plot(error_1, col[0])
+ax3[1].plot(error_2, col[1])
+ax3[2].plot(error_3, col[2])
+ax3[0].set_ylabel("Deviation (%)") ; ax3[0].set_xlabel("Snapshot number")
+ax3[1].set_ylabel("Deviation (%)") ; ax3[1].set_xlabel("Snapshot number")
+ax3[2].set_ylabel("Deviation (%)") ; ax3[2].set_xlabel("Snapshot number")
+ax3[0].legend(["Particule 1, $R = 5$ kpc"])
+ax3[1].legend(["Particule 2, $R = 5$ kpc"])
+ax3[2].legend(["Particule 3, $R = 30$ kpc"])
+plt.savefig("deviation_from_original_data.png")
+plt.close()
