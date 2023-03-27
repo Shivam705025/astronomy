@@ -41,20 +41,23 @@
 #endif
 
 /**
- * @brief External Potential Properties - NFW Potential + Miyamoto-Nagai + Power
- * Spherical cut-off
+ * @brief External Potential Properties - MWPotential2014 composed by
+ * NFW + Miyamoto-Nagai + Power Spherical cut-off potentials
  *
  * halo --> rho_NFW(r) = rho_0 / ( (r/R_s)*(1+r/R_s)^2 )
  * disk --> Phi_MN(R,z) = -G * Mdisk / (R^2 + (Rdisk +
  * (z^2+Zdisk^2)^1/2)^2)^(1/2) bulge --> rho_PSC(r) =
- * amplitude*(r_1/r)^alpha*exp(-(r/r_c)^2) (see the following url :
- * https://docs.galpy.org/en/v1.8.0/reference/potentialpowerspherwcut.html)
+ * amplitude*(r_1/r)^alpha*exp(-(r/r_c)^2)
  *
  * We however parametrise this in terms of c and virial_mass, Mdisk, Rdisk
- * and Zdisk. Also, each potential is given a contriubtion amplitude such that
- * the resulting potential is :
+ * and Zdisk. Also, each potential is given a contribution amplitude such that
+ * the resulting potential is:
  *      Phi_tot = f_1 * Phi_NFW + f_2 * Phi_MN + f_3 * Phi_PSC,
  * with f_1, f_2 and f_3 contained in the array f.
+ *
+ * This potential is inspired by the following article:
+ * galpy: A Python Library for Galactic Dynamics, Jo Bovy (2015),
+ * Astrophys. J. Supp., 216, 29 (arXiv/1412.3451).
  */
 struct external_potential {
 
@@ -328,12 +331,12 @@ static INLINE void potential_init_backend(
 	struct external_potential* potential) {
 
   /* Read in the position of the centre of potential */
-  parser_get_param_double_array(parameter_file, "NFW_MN_PSCPotential:position",
+  parser_get_param_double_array(parameter_file, "MWPotential2014Potential:position",
 								3, potential->x);
 
   /* Is the position absolute or relative to the centre of the box? */
   const int useabspos =
-	  parser_get_param_int(parameter_file, "NFW_MN_PSCPotential:useabspos");
+	  parser_get_param_int(parameter_file, "MWPotential2014Potential:useabspos");
 
   if (!useabspos) {
 	potential->x[0] += s->dim[0] / 2.;
@@ -343,12 +346,12 @@ static INLINE void potential_init_backend(
 
   /* Read the other parameters of the model */
   potential->timestep_mult = parser_get_param_double(
-	  parameter_file, "NFW_MN_PSCPotential:timestep_mult");
-  int use_MW_potential_params = parser_get_param_int(
-	  parameter_file, "NFW_MN_PSCPotential:use_MW_potential_params");
+	  parameter_file, "MWPotential2014Potential:timestep_mult");
+  int use_MWPotential2014_default_params = parser_get_param_int(
+	  parameter_file, "MWPotential2014Potential:use_MWPotential2014_default_params");
 
   /* Allows to quickly initialize a Milky Way like potential */
-  if (use_MW_potential_params) {
+  if (use_MWPotential2014_default_params) {
 	potential->c_200 = 15.3;
 	potential->M_200 = 80.0;  // 10^10 M_sol
 	potential->rho_c = 6.493414536809472e-09;
@@ -364,27 +367,27 @@ static INLINE void potential_init_backend(
 	potential->f[2] = 0.05;
   } else {
 	potential->c_200 = parser_get_param_double(
-		parameter_file, "NFW_MN_PSCPotential:concentration");
+		parameter_file, "MWPotential2014Potential:concentration");
 	potential->M_200 =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:M_200");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:M_200");
 	potential->rho_c = parser_get_param_double(
-		parameter_file, "NFW_MN_PSCPotential:critical_density");
+		parameter_file, "MWPotential2014Potential:critical_density");
 	potential->Mdisk =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:Mdisk");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:Mdisk");
 	potential->Rdisk =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:Rdisk");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:Rdisk");
 	potential->Zdisk =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:Zdisk");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:Zdisk");
 	potential->amplitude = parser_get_param_double(
-		parameter_file, "NFW_MN_PSCPotential:amplitude");
+		parameter_file, "MWPotential2014Potential:amplitude");
 	potential->r_1 =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:r_1");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:r_1");
 	potential->alpha =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:alpha");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:alpha");
 	potential->r_c =
-		parser_get_param_double(parameter_file, "NFW_MN_PSCPotential:r_c");
+		parser_get_param_double(parameter_file, "MWPotential2014Potential:r_c");
 	parser_get_param_double_array(parameter_file,
-								  "NFW_MN_PSCPotential:potential_factors", 3,
+								  "MWPotential2014Potential:potential_factors", 3,
 								  potential->f);
   }
   potential->eps = 0.05;
@@ -439,7 +442,7 @@ static INLINE void potential_print_backend(
 	const struct external_potential* potential) {
 
   message(
-	  "External potential is 'NFW + MN disk + PSC bulge' with properties are "
+	  "External potential is 'MWPotential2014 (NFW + MN disk + PSC bulge)' with properties are "
 	  "(x,y,z) = "
 	  "(%e, %e, %e), scale radius = %e power exponent = %e cut-off = %e "
 	  "timestep "
