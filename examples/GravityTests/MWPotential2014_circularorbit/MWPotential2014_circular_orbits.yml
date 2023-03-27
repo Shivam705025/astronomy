@@ -29,10 +29,10 @@ InitialConditions:
   periodic:           1
 
 # NFW_MN_PSC potential parameters
-NFW_MN_PSCPotential:
+MWPotential2014Potential:
   useabspos:       0        # 0 -> positions based on centre, 1 -> absolute positions 
   position:        [0.,0.,0.]    #Centre of the potential with respect to centre of the box
-  use_MW_potential_params:  0 #1 -> Uses the Milky Way potential parameters defined in swift ; 0 -> uses tje user entered parameters (below). Notice that, for this example, the parameters entered below correspond to the MW potential.
+  use_MWPotential2014_default_params:  0 #1 -> Uses the Milky Way potential parameters defined in galpy ; 0 -> uses the user entered parameters (below). Notice that, for this example, the parameters entered below correspond to the default MWpotential2014.
   M_200:            80.0
   concentration:    15.3
   critical_density: 6.493414536809472e-09
