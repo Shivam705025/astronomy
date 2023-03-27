@@ -29,7 +29,7 @@ G = 4.300927e-06
 M = 1e15
 GM = G * M
 
-lengthrun = 2001
+lengthrun = 201
 numbpar = 3
 
 radius = np.zeros((numbpar, lengthrun))
@@ -69,6 +69,7 @@ ax[1].set_xlim([-35,35])
 ax[1].set_ylim([-35,35])
 ax[1].set_ylabel("z (kpc)")
 ax[1].set_xlabel("x (kpc)")
+ax[1].legend(["Particule 1, $R = 5$ kpc", "Particule 2, $R = 5$ kpc", "Particule 3, $R = 30$ kpc"])
 
 for i in range(0, numbpar):
     ax[2].plot(yy[i, :], zz[i, :], col[i])
@@ -79,7 +80,7 @@ ax[2].set_ylim([-35,35])
 ax[2].set_ylabel("z (kpc)")
 ax[2].set_xlabel("y (kpc)")
 plt.savefig("circular_orbits.png")
-plt.close()
+# plt.close()
 
 #%%
 #Plot of the deviation from circular orbit
@@ -104,5 +105,11 @@ ax2[1].plot(error_2, col[1])
 ax2[1].plot(error_3, col[2])
 ax2[0].set_ylabel("Deviation (%)") ; ax2[0].set_xlabel("Snapshot number")
 ax2[1].set_ylabel("Deviation (%)") ; ax2[1].set_xlabel("Snapshot number")
-plt.savefig("errors.png")
-plt.close()
+ax2[0].legend(["Particule 1, $R = 5$ kpc"])
+ax2[1].legend(["Particule 2, $R = 5$ kpc", "Particule 3, $R = 30$ kpc"])
+
+plt.savefig("deviation.png")
+# plt.close()
+
+#%%Saves our data as a reference and make a comparison with the obtained data and ours
+#Then delete the code to save the reference data
