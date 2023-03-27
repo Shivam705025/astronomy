@@ -452,4 +452,4 @@ static INLINE void potential_print_backend(
 	  potential->mintime);
 }
 
-#endif /* SWIFT_POTENTIAL_NFW_MN_H */
+#endif /* SWIFT_POTENTIAL_MWPotential2014_H */
