@@ -51,7 +51,7 @@ for i in range(0, lengthrun):
 col = ["b", "r", "c", "y", "k"]
 
 #Plots the orbits
-fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 4.1), layout="tight")
+fig,ax = plt.subplots(nrows=1, ncols=3, num=1, figsize=(12, 4.1))
 fig.suptitle("Orbits", fontsize=15)
 ax[0].clear() ; ax[1].clear()
 
@@ -92,7 +92,7 @@ R_1_th = 5.0 #kpc
 R_2_th = 5.0 #kpc
 R_3_th = 30.0 #kpc
 
-fig2, ax2 = plt.subplots(nrows=1, ncols=2, num=2, figsize=(12, 4.5), layout="tight")
+fig2, ax2 = plt.subplots(nrows=1, ncols=2, num=2, figsize=(12, 4.5))
 fig2.suptitle("Deviation from circular orbit", fontsize=15)
 ax2[0].clear() ; ax2[1].clear()
 
@@ -109,8 +109,8 @@ r_3 = np.linalg.norm(pos_3, axis=0) ; error_3 = np.abs(r_3 - R_3_th)/R_3_th*100
 ax2[0].plot(error_1, col[0])
 ax2[1].plot(error_2, col[1])
 ax2[1].plot(error_3, col[2])
-ax2[0].set_ylabel("Deviation (%)") ; ax2[0].set_xlabel("Snapshot number")
-ax2[1].set_ylabel("Deviation (%)") ; ax2[1].set_xlabel("Snapshot number")
+ax2[0].set_ylabel("Deviation (\%)") ; ax2[0].set_xlabel("Snapshot number")
+ax2[1].set_ylabel("Deviation (\%)") ; ax2[1].set_xlabel("Snapshot number")
 ax2[0].legend(["Particule 1, $R = 5$ kpc"])
 ax2[1].legend(["Particule 2, $R = 5$ kpc", "Particule 3, $R = 30$ kpc"])
 
@@ -132,7 +132,7 @@ r_1_exp = radii_original[0, :] #exp stands for "experimental"
 r_2_exp = radii_original[1, :]
 r_3_exp = radii_original[2, :]
 
-fig3, ax3 = plt.subplots(nrows=1, ncols=3, num=3, figsize=(12, 4.3), layout="tight")
+fig3, ax3 = plt.subplots(nrows=1, ncols=3, num=3, figsize=(12, 4.3))
 fig3.suptitle("Deviation from the original data", fontsize=15)
 ax3[0].clear() ; ax3[1].clear() ; ax3[2].clear() 
 
@@ -143,9 +143,9 @@ error_3 = np.abs(r_3 - r_3_exp)/r_3_exp*100
 ax3[0].plot(error_1, col[0])
 ax3[1].plot(error_2, col[1])
 ax3[2].plot(error_3, col[2])
-ax3[0].set_ylabel("Deviation (%)") ; ax3[0].set_xlabel("Snapshot number")
-ax3[1].set_ylabel("Deviation (%)") ; ax3[1].set_xlabel("Snapshot number")
-ax3[2].set_ylabel("Deviation (%)") ; ax3[2].set_xlabel("Snapshot number")
+ax3[0].set_ylabel("Deviation (\%)") ; ax3[0].set_xlabel("Snapshot number")
+ax3[1].set_ylabel("Deviation (\%)") ; ax3[1].set_xlabel("Snapshot number")
+ax3[2].set_ylabel("Deviation (\%)") ; ax3[2].set_xlabel("Snapshot number")
 ax3[0].legend(["Particule 1, $R = 5$ kpc"])
 ax3[1].legend(["Particule 2, $R = 5$ kpc"])
 ax3[2].legend(["Particule 3, $R = 30$ kpc"])
