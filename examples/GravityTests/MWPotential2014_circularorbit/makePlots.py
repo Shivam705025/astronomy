@@ -106,11 +106,11 @@ r_1 = np.linalg.norm(pos_1, axis=0) ; error_1 = np.abs(r_1 - R_1_th)/R_1_th*100
 r_2 = np.linalg.norm(pos_2, axis=0) ; error_2 = np.abs(r_2 - R_2_th)/R_2_th*100
 r_3 = np.linalg.norm(pos_3, axis=0) ; error_3 = np.abs(r_3 - R_3_th)/R_3_th*100
 
-ax2[0].plot(error_1, col[0])
-ax2[1].plot(error_2, col[1])
-ax2[1].plot(error_3, col[2])
-ax2[0].set_ylabel("Deviation (\%)") ; ax2[0].set_xlabel("Snapshot number")
-ax2[1].set_ylabel("Deviation (\%)") ; ax2[1].set_xlabel("Snapshot number")
+ax2[0].plot(time, error_1, col[0])
+ax2[1].plot(time, error_2, col[1])
+ax2[1].plot(time, error_3, col[2])
+ax2[0].set_ylabel("Deviation (\%)") ; ax2[0].set_xlabel("Time (Gyr)")
+ax2[1].set_ylabel("Deviation (\%)") ; ax2[1].set_xlabel("Time (Gyr)")
 ax2[0].legend(["Particule 1, $R = 5$ kpc"])
 ax2[1].legend(["Particule 2, $R = 5$ kpc", "Particule 3, $R = 30$ kpc"])
 
@@ -140,12 +140,12 @@ error_1 = np.abs(r_1 - r_1_exp)/r_1_exp*100
 error_2 = np.abs(r_2 - r_2_exp)/r_2_exp*100 
 error_3 = np.abs(r_3 - r_3_exp)/r_3_exp*100 
 
-ax3[0].plot(error_1, col[0])
-ax3[1].plot(error_2, col[1])
-ax3[2].plot(error_3, col[2])
-ax3[0].set_ylabel("Deviation (\%)") ; ax3[0].set_xlabel("Snapshot number")
-ax3[1].set_ylabel("Deviation (\%)") ; ax3[1].set_xlabel("Snapshot number")
-ax3[2].set_ylabel("Deviation (\%)") ; ax3[2].set_xlabel("Snapshot number")
+ax3[0].plot(time, error_1, col[0])
+ax3[1].plot(time, error_2, col[1])
+ax3[2].plot(time, error_3, col[2])
+ax3[0].set_ylabel("Deviation (\%)") ; ax3[0].set_xlabel("Time (Gyr)")
+ax3[1].set_ylabel("Deviation (\%)") ; ax3[1].set_xlabel("Time (Gyr)")
+ax3[2].set_ylabel("Deviation (\%)") ; ax3[2].set_xlabel("Time (Gyr)")
 ax3[0].legend(["Particule 1, $R = 5$ kpc"])
 ax3[1].legend(["Particule 2, $R = 5$ kpc"])
 ax3[2].legend(["Particule 3, $R = 30$ kpc"])
