@@ -34,6 +34,7 @@ struct mhd_part_data {
 
   float curl_B[3];
 
+  float mon_est_B[3];
   /*union{
      float B_mon;
      float divB;

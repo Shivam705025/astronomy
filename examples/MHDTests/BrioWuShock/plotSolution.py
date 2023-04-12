@@ -42,17 +42,23 @@ v = None
 P = None
 B = None
 divB = None
+rotB = None
+
 with h5py.File(args.input, "r") as handle:
     gamma = handle["HydroScheme"].attrs["Adiabatic index"][0]
     boxsize = handle["Header"].attrs["BoxSize"][0]
     t = handle["Header"].attrs["Time"][0]
     x = handle["PartType0/Coordinates"][:, 0]
+    y = handle["PartType0/Coordinates"][:, 1]
+    z = handle["PartType0/Coordinates"][:, 2]
     rho = handle["PartType0/Densities"][:]
     h = handle["PartType0/SmoothingLengths"][:]
     v = handle["PartType0/Velocities"][:]
     P = handle["PartType0/Pressures"][:]
     B = handle["PartType0/MagneticFluxDensity"][:]
     divB = handle["PartType0/MagneticDivergence"][:]
+    monB = handle["PartType0/MonopolePartB"][:]
+    monBerr = handle["PartType0/BmonRatio"][:]
     git = handle["Code"].attrs["Git Revision"]
     gitBranch = handle["Code"].attrs["Git Branch"]
     scheme = handle["/HydroScheme"].attrs["Scheme"]
@@ -64,9 +70,43 @@ with h5py.File(args.input, "r") as handle:
     mhdeta = handle["/HydroScheme"].attrs["Diffusion Eta"]
     mhdflavour = handle["/HydroScheme"].attrs["MHD Flavour"]
 
+
+
+
 bb = np.sqrt(B[:,0]*B[:,0]+B[:,1]*B[:,1]+B[:,2]*B[:,2])
 x -= boxsize * 0.5
 
+R0 = np.abs(divB) * h / bb
+R2 =np.abs(monBerr) * h / bb
+
+
+
+#Abs_F=np.sqrt((-gradP[:,0]+rotB[:,1]*B[:,2]-rotB[:,2]*B[:,1])**2+(-gradP[:,1]+rotB[:,2]*B[:,0]-rotB[:,0]*B[:,2])**2+(-gradP[:,2]+rotB[:,0]*B[:,1]-rotB[:,1]*B[:,0])**2)
+
+
+#Abs_rot=np.sqrt(rotB[:,0]*rotB[:,0]+rotB[:,1]*rotB[:,1]+rotB[:,2]*rotB[:,2])
+R1= np.sqrt(monB[:,0]*monB[:,0]+monB[:,1]*monB[:,1]+monB[:,2]*monB[:,2])/bb
+#R1=Abs_F_L*h/bb
+
+#Creating bins, calculating mean and variance of a quantity in bins
+def _make_bins_and_statistics(x_cord,Obs_):
+    Nbins=50
+    xmax=np.max(x_cord)
+    xmin=np.min(x_cord)
+    x_new=[]
+    Obs_mean=[]
+    Obs_var=[]
+    for i in range(Nbins-1):
+        x_new+=[xmin+i/Nbins*(xmax-xmin)]
+        Obs_i=Obs_[np.where((x_cord>xmin+i/Nbins*(xmax-xmin))&(x_cord<xmin+(i+1)/Nbins*(xmax-xmin)))]
+        Obs_mean+=[np.mean(Obs_i)]
+        Obs_var+=[np.std(Obs_i)]
+    return x_new, Obs_mean, Obs_var
+ 
+
+x_rebin, R0_rebin_mean, R0_rebin_var = _make_bins_and_statistics(x,R0)
+x_rebin, R1_rebin_mean, R1_rebin_var = _make_bins_and_statistics(x,R1)
+x_rebin, R2_rebin_mean, R2_rebin_var = _make_bins_and_statistics(x,R2)
 # recreate the same Riemann problem for the HLL solver
 # the initial condition is generated using gamma=2., but since we set the
 # internal energy and not the pressure in the IC, this might lead to a different
@@ -103,9 +143,9 @@ riemann_problem = {
 }
 
 # compute the HLL reference solution
-print("Computing HLL reference solution...")
+#print("Computing HLL reference solution...")
 refx, solution = solve_MHD_Riemann_problem(riemann_problem)
-print("Done.")
+#print("Done.")
 #refx += boxsize
 
 # get the exact solution
@@ -115,33 +155,35 @@ exx, exsol = exact_Brio_Wu(t)
 # plot everything
 fig, ax = pl.subplots(3, 3, sharex=True, figsize=(10, 9))
 
-mms=1
+mms=2
 aalpha=0.3
 
 ax[0][0].plot(x, rho, ".",markersize=mms,alpha=aalpha)
-ax[0][0].plot(refx, solution["rho"], "-")
+#ax[0][0].plot(refx, solution["rho"], "-")
 ax[0][0].plot(exx, exsol["rho"], "-")
 ax[0][1].plot(x, P, ".",markersize=mms,alpha=aalpha)
-ax[0][1].plot(refx, solution["p"], "-")
+#ax[0][1].plot(refx, solution["p"], "-")
 ax[0][1].plot(exx, exsol["p"], "-")
-ax[0][2].plot(x, divB * h / bb, ".",markersize=mms,alpha=aalpha)
-ax[0][2].plot(refx[[0, -1]], [0.0, 0.0], "-")
+ax[0][2].errorbar(x_rebin, R0_rebin_mean,yerr=R0_rebin_var,capsize=3.0,label="R0 = |divB|*h/|B|",fmt="o")
+#ax[0][2].errorbar(x_rebin, R1_rebin_mean,yerr=R1_rebin_var,capsize=3.0,label="R1 = |B_mon|/|B_tot|",fmt="o")
+#ax[0][2].errorbar(x_rebin, R2_rebin_mean,yerr=R2_rebin_var,capsize=3.0,label="R2 = |divB_mon|*h/|B|",fmt="o")
+#ax[0][2].plot(refx[[0, -1]], [0.0, 0.0], "-")
 ax[0][2].plot(exx[[0, -1]], [0.0, 0.0], "-")
-
 for i in range(3):
     ax[1][i].plot(x, v[:, i], ".",markersize=mms,alpha=aalpha)
-    ax[1][i].plot(refx, solution[["u", "v", "w"][i]], "-")
+    #ax[1][i].plot(refx, solution[["u", "v", "w"][i]], "-")
     ax[1][i].plot(exx, exsol[["u", "v", "w"][i]], "-")
 
 
 ax[2][0].plot(x, B[:, 0], ".", label="SWIFT",markersize=mms,alpha=aalpha)
-ax[2][0].plot(refx,solution["Bx"],"-", label=f"HLL solver ({args.ncell} cells)")
+#ax[2][0].plot(refx,solution["Bx"],"-", label=f"HLL solver ({args.ncell} cells)")
 ax[2][0].plot(exx, exsol["Bx"], "-", label="Exact solution")
 ax[2][1].plot(x, B[:, 1], ".",markersize=mms,alpha=aalpha)
-ax[2][1].plot(refx,solution["By"],"-")
+#ax[2][1].plot(x, monB[:, 1], ".",markersize=mms,alpha=aalpha, label="monB_y")
+#ax[2][1].plot(refx,solution["By"],"-")
 ax[2][1].plot(exx, exsol["By"], "-")
 ax[2][0].plot(x, B[:, 2], ".",markersize=mms,alpha=aalpha)
-ax[2][0].plot(refx,solution["Bz"],"-")
+#ax[2][0].plot(refx,solution["Bz"],"-")
 ax[2][0].plot(exx, exsol["Bz"], "-")
 
 ax[0][0].set_ylabel("rho")
@@ -154,8 +196,10 @@ ax[2][0].set_ylabel("Bx/Bz")
 ax[2][1].set_ylabel("By")
 #ax[2][2].set_ylabel("Bz")
 
-ax[2][0].legend(loc="best")
+ax[0][2].set_yscale("log")
 
+ax[2][0].legend(loc="best")
+ax[0][2].legend(loc="best")
 # Information -------------------------------------
 #plt.subplot(236, frameon=False)
 
@@ -171,7 +215,8 @@ ax[2][2].text(-0.45, 0.4, "$Branch$ %s" % gitBranch.decode("utf-8"), fontsize=te
 ax[2][2].text(-0.45, 0.3, scheme.decode("utf-8"), fontsize=text_fontsize)
 ax[2][2].text(-0.45, 0.2, kernel.decode("utf-8"), fontsize=text_fontsize)
 ax[2][2].text(-0.45, 0.1, "$%.2f$ neighbours" % (neighbours),fontsize=text_fontsize)
-ax[2][2].plot([-0.45, 0.45], [0.0, 0.0], "k-", lw=1)
+ax[2][2].text(-0.45, 0, "$%.0f$ particles" % (len(x)),fontsize=text_fontsize)
+#ax[2][2].plot([-0.45, 0.45], [0.0, 0.0], "k-", lw=1)
 ax[2][2].text(-0.45, -0.1, "$\\mu_0:%.2f$ " % (mu0),fontsize=text_fontsize)
 ax[2][2].text(-0.45, -0.2, "$Difussion_\\eta:%.2f$ " % (mhdeta),fontsize=text_fontsize)
 ax[2][2].text(-0.45, -0.3, "$Dedner: Hyp=%.2f // Par=%.2f$" % (dedhyp,dedpar),fontsize=text_fontsize)
@@ -189,7 +234,7 @@ for a in ax[2]:
 #    a.set_ylim(*ax[2][1].get_ylim())
 ax[0][0].set_ylim(0.0,1.1)
 ax[0][1].set_ylim(0.0,1.1)
-ax[0][2].set_ylim(-0.2,0.2)
+ax[0][2].set_ylim(10**(-5),10)
 ax[1][0].set_ylim(-2.0,1.0)
 ax[1][1].set_ylim(-2.0,1.0)
 ax[1][2].set_ylim(-2.0,1.0)
