@@ -742,6 +742,50 @@ void runner_do_timestep(struct runner *r, struct cell *c, const int timer) {
                                     e->max_nr_rt_subcycles, e->time_base);
 #endif
 
+        /*-----------------------Extracting monopole component----------------------*/
+        
+	const int np_chunk = e->s->nr_parts;
+
+	for (int j = 0; j<np_chunk; ++j) {
+
+	/* Local particle */
+	struct part *pi=p;
+
+	/* Other particle */
+	struct part* pj = e->s->parts[j];
+  
+	/* Zeroing monopole component*/
+	pi->B_mon_est[0] = 0.0f;
+        pi->B_mon_est[1] = 0.0f;
+        pi->B_mon_est[2] = 0.0f;
+
+	/* Skip self-interaction */
+	if (pi==pj) continue;
+
+        /* distance vector rij */
+	double dx[3];
+	dx[0]=(pi->x[0])-(pj->x[0]);
+        dx[1]=(pi->x[1])-(pj->x[1]);
+	dx[2]=(pi->x[2])-(pj->x[2]);
+
+        /* get other particle parameters */
+	const double m_j = pj -> mass;
+	const double rho_j = pj -> rho;
+	const double divB_j = pj -> B_mon;
+
+	/* inverse distance with some regularization */
+
+        double r_inv_reg_j = 1/sqrt(dx[0]*dx[0]+dx[1]*dx[1]+dx[2]*dx[2]);
+
+	/* Think about edges */
+
+        /* Compute monopole component */
+	pi->mon_est_B[0] += m_j/rho_j*divB_j*dx[0]*(r_inv_reg_j*r_inv_reg_j*r_inv_reg_j);
+        pi->mon_est_B[1] += m_j/rho_j*divB_j*dx[1]*(r_inv_reg_j*r_inv_reg_j*r_inv_reg_j);
+        pi->mon_est_B[2] += m_j/rho_j*divB_j*dx[2]*(r_inv_reg_j*r_inv_reg_j*r_inv_reg_j);
+	}
+        /*-----------------------------------------end-----------------------------------------------*/
+
         /* Update particle */
         p->time_bin = get_time_bin(ti_new_step);
         if (p->gpart != NULL) p->gpart->time_bin = p->time_bin;

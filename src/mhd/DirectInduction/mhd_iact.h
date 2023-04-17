@@ -556,20 +556,6 @@ __attribute__((always_inline)) INLINE static void runner_iact_mhd_force(
   pj->mhd_data.B_over_rho_dt[1] += mi * grad_psi_j * dx[1];
   pj->mhd_data.B_over_rho_dt[2] += mi * grad_psi_j * dx[2];
 
-
- /* Calculate monopole part */
-  const float r_reg_i = sqrtf(r2+hi*hi);
-  const float r_inv_reg_i = r_reg_i ? 1.0f / r_reg_i : 0.0f;
-  const float r_reg_j = sqrtf(r2+hj*hj);
-  const float r_inv_reg_j = r_reg_j ? 1.0f / r_reg_j : 0.0f;
-
-  pi->mhd_data.mon_est_B[0] += mj * (pj->mhd_data.B_mon) / (4.0f * 3.1415f * rhoj) * dx[0] * (r_inv_reg_j * r_inv_reg_j * r_inv_reg_j);
-  pj->mhd_data.mon_est_B[0] += - mi * (pi->mhd_data.B_mon) / (4.0f * 3.1415f * rhoi) * dx[0] * (r_inv_reg_i * r_inv_reg_i * r_inv_reg_i);
-  pi->mhd_data.mon_est_B[1] += mj * (pj->mhd_data.B_mon) / (4.0f * 3.1415f * rhoj) * dx[1] * (r_inv_reg_j * r_inv_reg_j * r_inv_reg_j);
-  pj->mhd_data.mon_est_B[1] += - mi * (pi->mhd_data.B_mon) / (4.0f * 3.1415f * rhoi) * dx[1] * (r_inv_reg_i * r_inv_reg_i * r_inv_reg_i);
-  pi->mhd_data.mon_est_B[2] += mj * (pj->mhd_data.B_mon) / (4.0f * 3.1415f * rhoj) * dx[2] * (r_inv_reg_j * r_inv_reg_j * r_inv_reg_j);
-  pj->mhd_data.mon_est_B[2] += - mi * (pi->mhd_data.B_mon) / (4.0f * 3.1415f * rhoi) * dx[2] * (r_inv_reg_i * r_inv_reg_i * r_inv_reg_i);
-
 }
 
 /**
@@ -821,15 +807,6 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_mhd_force(
   pi->mhd_data.B_over_rho_dt[0] -= mj * grad_psi_i * dx[0];
   pi->mhd_data.B_over_rho_dt[1] -= mj * grad_psi_i * dx[1];
   pi->mhd_data.B_over_rho_dt[2] -= mj * grad_psi_i * dx[2];
-
- /* Calculate monopole part */
-  const float r_reg_j = sqrtf(r2+hj*hj);
-  const float r_inv_reg_j = r_reg_j ? 1.0f / r_reg_j : 0.0f;
-
-  pi->mhd_data.mon_est_B[0] +=  mj * (pj->mhd_data.B_mon) / (4.0f * 3.1415f * rhoj) * dx[0] * (r_inv_reg_j * r_inv_reg_j * r_inv_reg_j);
-  pi->mhd_data.mon_est_B[1] +=  mj * (pj->mhd_data.B_mon) / (4.0f * 3.1415f * rhoj) * dx[1] * (r_inv_reg_j * r_inv_reg_j * r_inv_reg_j);
-  pi->mhd_data.mon_est_B[2] +=  mj * (pj->mhd_data.B_mon) / (4.0f * 3.1415f * rhoj) * dx[2] * (r_inv_reg_j * r_inv_reg_j * r_inv_reg_j);
-
 
 }
 
