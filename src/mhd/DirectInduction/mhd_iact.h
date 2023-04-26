@@ -447,6 +447,15 @@ __attribute__((always_inline)) INLINE static void runner_iact_mhd_force(
   pj->a_hydro[0] -= mi * sph_acc_term_j[0];
   pj->a_hydro[1] -= mi * sph_acc_term_j[1];
   pj->a_hydro[2] -= mi * sph_acc_term_j[2];
+  
+  /* Save mag force */
+  pi->mhd_data.tot_mag_F[0] -= mj * sph_acc_term_i[0];
+  pi->mhd_data.tot_mag_F[1] -= mj * sph_acc_term_i[1];
+  pi->mhd_data.tot_mag_F[2] -= mj * sph_acc_term_i[2];
+
+  pj->mhd_data.tot_mag_F[0] -= mi * sph_acc_term_j[0];
+  pj->mhd_data.tot_mag_F[1] -= mi * sph_acc_term_j[1];
+  pj->mhd_data.tot_mag_F[2] -= mi * sph_acc_term_j[2];
 
   /* Calculate monopole term */
   // float B_mon_i = -over_rho2_i * rhoi * (Bri - Brj) * wi_dr * r_inv;
@@ -720,6 +729,11 @@ __attribute__((always_inline)) INLINE static void runner_iact_nonsym_mhd_force(
   pi->a_hydro[0] -= mj * sph_acc_term_i[0];
   pi->a_hydro[1] -= mj * sph_acc_term_i[1];
   pi->a_hydro[2] -= mj * sph_acc_term_i[2];
+
+  /* Save mag force */
+  pi->mhd_data.tot_mag_F[0] -= mj * sph_acc_term_i[0];
+  pi->mhd_data.tot_mag_F[1] -= mj * sph_acc_term_i[1];
+  pi->mhd_data.tot_mag_F[2] -= mj * sph_acc_term_i[2];
 
   /* Calculate monopole term */
   // float B_mon_i = -over_rho2_i * rhoi * (Bri - Brj) * wi_dr * r_inv;

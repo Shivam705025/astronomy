@@ -90,7 +90,7 @@ divB=divB[maskCube]
 monB=monB[maskCube]
 #divBest=divBest[maskCube]
 
-
+print(np.max(np.abs(monB[:,0])),len(monB[:,0]))
 # plot everythinplots(3, 3, sharex=True, figsize=(10, 9))
 # plot everything
 fig, ax = pl.subplots(3, 3, sharex=True, figsize=(10, 9))
@@ -100,12 +100,13 @@ aalpha=0.3
 ax[0][0].plot(x, rho, ".",markersize=mms,alpha=aalpha)
 ax[0][1].plot(x, P, ".",markersize=mms,alpha=aalpha)
 ax[0][2].plot(x, divB, ".",markersize=mms,alpha=aalpha,label="divB")
+monB=monB*100
 #ax[0][2].plot(x,divBest,".",markersize=mms,alpha=aalpha,label="|divBest|")
 for i in range(3):
     ax[1][i].plot(x, v[:, i], ".",markersize=mms,alpha=aalpha)
     
 ax[2][0].plot(x, B[:, 0], ".", label="SWIFT",markersize=mms,alpha=aalpha)
-ax[2][0].plot(x,2*4*3.14*monB[:,0],".",markersize=mms,alpha=aalpha,label="|B_mon_x|")
+ax[2][0].plot(x,0.013*monB[:,0],".",markersize=mms,alpha=aalpha,label="|B_mon_x|")
 ax[2][1].plot(x, B[:, 1], ".",markersize=mms,alpha=aalpha)
 ax[0][0].set_ylabel("rho")
 ax[0][1].set_ylabel("P")

@@ -289,6 +289,9 @@ __attribute__((always_inline)) INLINE static void mhd_reset_acceleration(
   p->mhd_data.B_over_rho_dt[0] = 0.0f;
   p->mhd_data.B_over_rho_dt[1] = 0.0f;
   p->mhd_data.B_over_rho_dt[2] = 0.0f;
+  p->mhd_data.tot_mag_F[0]=0.0f;
+  p->mhd_data.tot_mag_F[1]=0.0f;
+  p->mhd_data.tot_mag_F[2]=0.0f;
 }
 
 /**

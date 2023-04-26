@@ -74,10 +74,13 @@ INLINE static int mhd_write_particles(const struct part* parts,
       xparts, convert_B, "Magnetic flux densities of the particles");
 
   list[4] = io_make_output_field(
-      "MonopolePartB", FLOAT, 3, UNIT_CONV_MAGNETIC_FIELD, 1.f, parts,
-      mhd_data.mon_est_B, "Monopole part of the B field");
-
-  return 5;
+      "MonopolePartB", FLOAT, 3, UNIT_CONV_MAGNETIC_FIELD, 1.f, parts, mhd_data.mon_est_B, "Monopole part of the B field");
+ 
+  list[5] = io_make_output_field(
+      "CurlB", FLOAT, 3,UNIT_CONV_MAGNETIC_DIVERGENCE, 1.f, parts, mhd_data.curl_B, "Rotor the B field");
+  list[6] = io_make_output_field(
+      "Fmag", FLOAT, 3,UNIT_CONV_MAGNETIC_DIVERGENCE, 1.f, parts, mhd_data.tot_mag_F, "Total magnetic force");
+  return 7;
 }
 
 /**

@@ -32,7 +32,7 @@ fileName = "BrioWu.hdf5"
 # ---------------------------------------------------
 boxSide = x_max - x_min
 
-glass = h5py.File("glassCube_64.hdf5", "r")
+glass = h5py.File("glassCube_16.hdf5", "r")
 
 
 pos = glass["/PartType0/Coordinates"][:, :]
@@ -61,7 +61,7 @@ for i in range(numPart):
     v[i,0] = 0.0
     v[i,1] = 0.0
     v[i,2] = 0.0
-    b[i,0] = sin(2*3.1415*(x-0.5)/0.5) #0.5*(y-0.5)-(x-0.5)
+    b[i,0] =(x-0.5)#sin(3*2*3.1415*(x-0.5)/0.5)#0.5*(y-0.5)-(x-0.5)
     b[i,1] = 0.0 #0.5*(-x+0.5)
     b[i,2] = 0.0
     vp[i, 0] = 0.0

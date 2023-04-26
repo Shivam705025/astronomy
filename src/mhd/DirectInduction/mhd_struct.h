@@ -40,6 +40,7 @@ struct mhd_part_data {
      float divB;
   };
   */
+  float tot_mag_F[3];
 
   float psi_over_ch;
 
@@ -52,6 +53,7 @@ struct mhd_part_data {
 struct mhd_xpart_data {
 
   float B_over_rho_full[3];
+
 };
 
 #endif /* SWIFT_DIRECT_INDUCTION_MHD_STRUCT_H */
