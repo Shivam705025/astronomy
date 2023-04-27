@@ -337,7 +337,22 @@ static INLINE void potential_init_backend(
   /* Is the position absolute or relative to the centre of the box? */
   const int useabspos = parser_get_param_int(
       parameter_file, "MWPotential2014Potential:useabspos");
-
+  
+  /* Define the default value */
+  static const double c_200_default = 15.3;
+  static const double M_200_default = 80.0; // 10^10 M_sol
+  static const double H_default = 0.048427649206650186; 
+  static const double Mdisk_default = 6.8; // 10^10 M_sol
+  static const double Rdisk_default = 3.0; // kpc
+  static const double Zdisk_default = 0.280; // kpc
+  static const double amplitude_default = 1.0;
+  static const double r_1_default = 1.0;
+  static const double alpha_default = -1.8;
+  static const double r_c_default = 1.9;
+  potential->f[0] = 0.35;
+  potential->f[1] = 0.60;
+  potential->f[2] = 0.05;
+  
   if (!useabspos) {
     potential->x[0] += s->dim[0] / 2.;
     potential->x[1] += s->dim[1] / 2.;
@@ -347,50 +362,29 @@ static INLINE void potential_init_backend(
   /* Read the other parameters of the model */
   potential->timestep_mult = parser_get_param_double(
       parameter_file, "MWPotential2014Potential:timestep_mult");
-  int use_MWPotential2014_default_params = parser_get_param_int(
-      parameter_file,
-      "MWPotential2014Potential:use_MWPotential2014_default_params");
-
-  /* Allows to quickly initialize a Milky Way like potential */
-  if (use_MWPotential2014_default_params) {
-    potential->c_200 = 15.3;
-    potential->M_200 = 80.0;  // 10^10 M_sol
-    potential->H = 0.048427649206650186;
-    potential->Mdisk = 6.8;    // 10^10 M_sol
-    potential->Rdisk = 3.0;    // kpc
-    potential->Zdisk = 0.280;  // kpc
-    potential->amplitude = 1.0;
-    potential->r_1 = 1.0;
-    potential->alpha = -1.8;
-    potential->r_c = 1.9;  // kpc
-    potential->f[0] = 0.35;
-    potential->f[1] = 0.60;
-    potential->f[2] = 0.05;
-  } else {
-    potential->c_200 = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:concentration");
-    potential->M_200 = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:M_200");
-    potential->H = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:H");
-    potential->Mdisk = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:Mdisk");
-    potential->Rdisk = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:Rdisk");
-    potential->Zdisk = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:Zdisk");
-    potential->amplitude = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:amplitude");
-    potential->r_1 =
-        parser_get_param_double(parameter_file, "MWPotential2014Potential:r_1");
-    potential->alpha = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:alpha");
-    potential->r_c =
-        parser_get_param_double(parameter_file, "MWPotential2014Potential:r_c");
-    parser_get_param_double_array(parameter_file,
-                                  "MWPotential2014Potential:potential_factors",
-                                  3, potential->f);
-  }
+  potential->c_200 = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:concentration", c_200_default);
+  potential->M_200 = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:M_200", M_200_default);
+  potential->H = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:H", H_default);
+  potential->Mdisk = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:Mdisk", Mdisk_default);
+  potential->Rdisk = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:Rdisk", Rdisk_default);
+  potential->Zdisk = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:Zdisk", Zdisk_default);
+  potential->amplitude = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:amplitude", amplitude_default);
+  potential->r_1 =
+      parser_get_opt_param_double(parameter_file, "MWPotential2014Potential:r_1", r_1_default);
+  potential->alpha = parser_get_opt_param_double(
+      parameter_file, "MWPotential2014Potential:alpha", alpha_default);
+  potential->r_c =
+      parser_get_opt_param_double(parameter_file, "MWPotential2014Potential:r_c", r_c_default);
+  parser_get_opt_param_double_array(parameter_file,
+                                "MWPotential2014Potential:potential_factors",
+                                3, potential->f);
   potential->eps = 0.05;
   
   /* Compute rho_c */
