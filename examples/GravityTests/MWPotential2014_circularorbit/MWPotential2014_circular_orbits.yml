@@ -32,17 +32,17 @@ InitialConditions:
 MWPotential2014Potential:
   useabspos:       0        # 0 -> positions based on centre, 1 -> absolute positions 
   position:        [0.,0.,0.]    #Centre of the potential with respect to centre of the box
-  use_MWPotential2014_default_params:  0 #1 -> Uses the Milky Way potential parameters defined in galpy (arXiv/1412.3451); 0 -> uses the user entered parameters (below). Notice that, for this example, the parameters entered below correspond to the default MWpotential2014.
-  M_200:            80.0
-  concentration:    15.3
-  critical_density: 6.493414536809472e-09
-  Mdisk:            6.8
-  Rdisk:            3.0
-  Zdisk:            0.280
-  amplitude:        1.0
-  r_1:              1.0
-  alpha:            -1.8
-  r_c:              1.9
-  potential_factors: [0.35, 0.6, 0.05]
   timestep_mult:   0.005     # Dimensionless pre-factor for the time-step condition
   epsilon:         0.001      # Softening size (internal units)
+  #The following parameters are the default ones.
+  # M_200:            80.0
+  # concentration:    15.3
+  # H: 0.048427649206650186
+  # Mdisk:            6.8
+  # Rdisk:            3.0
+  # Zdisk:            0.280
+  # amplitude:        1.0
+  # r_1:              1.0
+  # alpha:            -1.8
+  # r_c:              1.9
+  # potential_factors: [0.35, 0.6, 0.05]
