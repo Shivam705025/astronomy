@@ -37,7 +37,7 @@ MWPotential2014Potential:
   #The following parameters are the default ones.
   # M_200:            80.0
   # concentration:    15.3
-  # H: 0.048427649206650186
+  # H:                0.048427649206650186
   # Mdisk:            6.8
   # Rdisk:            3.0
   # Zdisk:            0.280
