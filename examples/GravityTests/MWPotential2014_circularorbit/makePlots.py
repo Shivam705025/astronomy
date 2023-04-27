@@ -134,18 +134,21 @@ plt.close()
 #%%Make a comparison with the obtained data and ours to check nothing is broken
 # Then delete the code to save the reference data
 
-filename = "original_radii.pkl"  # Original data
-# with open(filename, "wb") as file:
-#     pickle.dump(np.array([r_1, r_2, r_3]), file)
-#     # pickle.dump(r_2, file)
-#     # pickle.dump(r_3, file)
+# Original data
+filename = "original_radii.pkl"  
 
+#If some corrections occur in the potential default parameters, allows to correct the data
+# with open(filename, "wb") as file:
+    # pickle.dump(np.array([r_1, r_2, r_3]), file)
+
+#Open the file containing the original data and load the data
 with open(filename, "rb") as file:
     radii_original = pickle.load(file)
 r_1_exp = radii_original[0, :]  # exp stands for "experimental"
 r_2_exp = radii_original[1, :]
 r_3_exp = radii_original[2, :]
 
+#Plots the deviation wrt the original data
 fig3, ax3 = plt.subplots(nrows=1, ncols=3, num=3, figsize=(12, 4.3))
 fig3.suptitle("Deviation from the original data", fontsize=15)
 ax3[0].clear()

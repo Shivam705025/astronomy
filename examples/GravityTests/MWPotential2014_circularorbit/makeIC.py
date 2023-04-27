@@ -31,9 +31,9 @@ pos += np.array(
     [box_size / 2, box_size / 2, box_size / 2]
 )  # shifts the particles to the center of the box
 vel = np.zeros((3, 3))
-vel[0, 0] = 300.16375432528355
-vel[1, 0] = 311.3726272006567
-vel[2, 1] = 163.3158823034422
+vel[0, 0] = 300.7083095019465
+vel[1, 0] = 311.89761294807687
+vel[2, 1] = 164.08292008403856
 
 ids = np.array([1.0, 2.0, 3.0])
 mass = np.array([1.0, 1.0, 1.0]) * 1e-10
