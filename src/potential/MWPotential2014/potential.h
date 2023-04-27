@@ -70,8 +70,8 @@ struct external_potential {
   /*! The pre-factor \f$ 4 \pi G \rho_0 \r_s^3 \f$ */
   double pre_factor;
 
-  /*! The critical density of the universe */
-  double rho_c;
+  /*! Hubble parameter */
+  double H;
 
   /*! The concentration parameter */
   double c_200;
@@ -355,7 +355,7 @@ static INLINE void potential_init_backend(
   if (use_MWPotential2014_default_params) {
     potential->c_200 = 15.3;
     potential->M_200 = 80.0;  // 10^10 M_sol
-    potential->rho_c = 6.493414536809472e-09;
+    potential->H = 0.05931151499939577;
     potential->Mdisk = 6.8;    // 10^10 M_sol
     potential->Rdisk = 3.0;    // kpc
     potential->Zdisk = 0.280;  // kpc
@@ -371,8 +371,8 @@ static INLINE void potential_init_backend(
         parameter_file, "MWPotential2014Potential:concentration");
     potential->M_200 = parser_get_param_double(
         parameter_file, "MWPotential2014Potential:M_200");
-    potential->rho_c = parser_get_param_double(
-        parameter_file, "MWPotential2014Potential:critical_density");
+    potential->H = parser_get_param_double(
+        parameter_file, "MWPotential2014Potential:H");
     potential->Mdisk = parser_get_param_double(
         parameter_file, "MWPotential2014Potential:Mdisk");
     potential->Rdisk = parser_get_param_double(
@@ -392,10 +392,13 @@ static INLINE void potential_init_backend(
                                   3, potential->f);
   }
   potential->eps = 0.05;
+  
+  /* Compute rho_c */
+  const double rho_c = 2.0 * potential->H * potential->H / (8.0 * M_PI * phys_const->const_newton_G);
 
   /* Compute R_200 */
   const double R_200 =
-      cbrtf(3.0 * potential->M_200 / (4. * M_PI * 200.0 * potential->rho_c));
+      cbrtf(3.0 * potential->M_200 / (4. * M_PI * 200.0 * rho_c));
 
   /* NFW scale-radius */
   potential->r_s = R_200 / potential->c_200;
