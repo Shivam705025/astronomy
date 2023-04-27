@@ -355,7 +355,7 @@ static INLINE void potential_init_backend(
   if (use_MWPotential2014_default_params) {
     potential->c_200 = 15.3;
     potential->M_200 = 80.0;  // 10^10 M_sol
-    potential->H = 0.05931151499939577;
+    potential->H = 0.048427649206650186;
     potential->Mdisk = 6.8;    // 10^10 M_sol
     potential->Rdisk = 3.0;    // kpc
     potential->Zdisk = 0.280;  // kpc
@@ -394,7 +394,7 @@ static INLINE void potential_init_backend(
   potential->eps = 0.05;
   
   /* Compute rho_c */
-  const double rho_c = 2.0 * potential->H * potential->H / (8.0 * M_PI * phys_const->const_newton_G);
+  const double rho_c = 3.0 * potential->H * potential->H / (8.0 * M_PI * phys_const->const_newton_G);
 
   /* Compute R_200 */
   const double R_200 =
