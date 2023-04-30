@@ -20,9 +20,6 @@
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
-import pickle
-
-# from scipy.integrate import odeint
 
 t = np.linspace(0, 40, 100000)
 y0 = [0, 10]
@@ -131,22 +128,24 @@ ax2[1].legend(["Particule 2, $R = 5$ kpc", "Particule 3, $R = 30$ kpc"])
 plt.savefig("deviation.png")
 plt.close()
 
-#%%Make a comparison with the obtained data and ours to check nothing is broken
-# Then delete the code to save the reference data
-
+#%%Saves our data to be the reference ones (precomputed)
+# Uncomment only if corrections of the precomputed data must occur !
 # Original data
-filename = "original_radii.pkl"  
-
+# filename = "original_radii.hdf5"  
+# 
 #If some corrections occur in the potential default parameters, allows to correct the data
-# with open(filename, "wb") as file:
-    # pickle.dump(np.array([r_1, r_2, r_3]), file)
+# with h5py.File(filename, "w") as f:
+#     dset_1 = f.create_dataset("r_1", data=r_1)
+#     dset_2 = f.create_dataset("r_2", data=r_2)
+#     dset_3 = f.create_dataset("r_3", data=r_3)
 
+#%%Make a comparison with the obtained data and ours to check nothing is broken
 #Open the file containing the original data and load the data
-with open(filename, "rb") as file:
-    radii_original = pickle.load(file)
-r_1_exp = radii_original[0, :]  # exp stands for "experimental"
-r_2_exp = radii_original[1, :]
-r_3_exp = radii_original[2, :]
+filename = "original_radii.hdf5"  
+radii_original_file = h5py.File(filename, "r")
+r_1_original = radii_original_file["r_1"]
+r_2_original = radii_original_file["r_2"]
+r_3_original = radii_original_file["r_3"]
 
 #Plots the deviation wrt the original data
 fig3, ax3 = plt.subplots(nrows=1, ncols=3, num=3, figsize=(12, 4.3))
@@ -155,9 +154,9 @@ ax3[0].clear()
 ax3[1].clear()
 ax3[2].clear()
 
-error_1 = np.abs(r_1 - r_1_exp) / r_1_exp * 100
-error_2 = np.abs(r_2 - r_2_exp) / r_2_exp * 100
-error_3 = np.abs(r_3 - r_3_exp) / r_3_exp * 100
+error_1 = np.abs(r_1 - r_1_original) / r_1_original * 100
+error_2 = np.abs(r_2 - r_2_original) / r_2_original * 100
+error_3 = np.abs(r_3 - r_3_original) / r_3_original * 100
 
 ax3[0].plot(time, error_1, col[0])
 ax3[1].plot(time, error_2, col[1])
