@@ -18,9 +18,14 @@ then
     rm circular_orbits.png
 fi
 
-if [ -f "errors.png" ];
+if [ -f "deviation.png" ];
 then
-    rm errors.png
+    rm deviation.png
+fi
+
+if [ -f "deviation_from_original_data.png" ];
+then
+    rm deviation_from_original_data.png
 fi
 
 #Generates the initial conditions
