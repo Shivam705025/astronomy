@@ -43,6 +43,6 @@ MWPotential2014Potential:
   # Zdisk:            0.280
   # amplitude:        1.0
   # r_1:              1.0
-  # alpha:            -1.8
+  # alpha:            1.8
   # r_c:              1.9
   # potential_factors: [0.35, 0.6, 0.05]
