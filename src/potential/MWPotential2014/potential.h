@@ -341,7 +341,7 @@ static INLINE void potential_init_backend(
   /* Define the default value */
   static const double c_200_default = 15.3;
   static const double M_200_default = 80.0; // 10^10 M_sol
-  static const double H_default = 4843.438551017651; 
+  static const double H_default = 0.04843438551017651; 
   static const double Mdisk_default = 6.8; // 10^10 M_sol
   static const double Rdisk_default = 3.0; // kpc
   static const double Zdisk_default = 0.280; // kpc
@@ -389,7 +389,9 @@ static INLINE void potential_init_backend(
   
   /* Compute rho_c */
   const double rho_c = 3.0 * potential->H * potential->H / (8.0 * M_PI * phys_const->const_newton_G);
-
+  
+  printf("\n\n%e\n\n", rho_c);
+  
   /* Compute R_200 */
   const double R_200 =
       cbrtf(3.0 * potential->M_200 / (4. * M_PI * 200.0 * rho_c));
