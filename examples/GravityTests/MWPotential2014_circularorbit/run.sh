@@ -28,6 +28,13 @@ then
     rm deviation_from_original_data.png
 fi
 
+#Clears the IC file
+if [ -f "circular_orbits_MW.hdf5" ];
+then
+    rm circular_orbits_MW.hdf5
+fi
+
+
 #Generates the initial conditions
 echo "Generate initial conditions for circular orbits"
 if command -v python3 &>/dev/null; then
