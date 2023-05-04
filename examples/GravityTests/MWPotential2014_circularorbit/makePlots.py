@@ -131,21 +131,14 @@ plt.close()
 #%%Saves our data to be the reference ones (precomputed)
 # Uncomment only if corrections of the precomputed data must occur !
 # Original data
-# filename = "original_radii.hdf5"  
-# 
+# filename = "original_radii.txt"  
 #If some corrections occur in the potential default parameters, allows to correct the data
-# with h5py.File(filename, "w") as f:
-#     dset_1 = f.create_dataset("r_1", data=r_1)
-#     dset_2 = f.create_dataset("r_2", data=r_2)
-#     dset_3 = f.create_dataset("r_3", data=r_3)
+# np.savetxt(filename, (r_1, r_2, r_3))
 
 #%%Make a comparison with the obtained data and ours to check nothing is broken
 #Open the file containing the original data and load the data
-filename = "original_radii.hdf5"  
-radii_original_file = h5py.File(filename, "r")
-r_1_original = radii_original_file["r_1"]
-r_2_original = radii_original_file["r_2"]
-r_3_original = radii_original_file["r_3"]
+filename = "original_radii.txt"  
+r_1_original, r_2_original, r_3_original = np.loadtxt(filename)
 
 #Plots the deviation wrt the original data
 fig3, ax3 = plt.subplots(nrows=1, ncols=3, num=3, figsize=(12, 4.3))
