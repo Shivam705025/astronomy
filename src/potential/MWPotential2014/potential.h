@@ -389,9 +389,7 @@ static INLINE void potential_init_backend(
   
   /* Compute rho_c */
   const double rho_c = 3.0 * potential->H * potential->H / (8.0 * M_PI * phys_const->const_newton_G);
-  
-  printf("\n\n%e\n\n", rho_c);
-  
+    
   /* Compute R_200 */
   const double R_200 =
       cbrtf(3.0 * potential->M_200 / (4. * M_PI * 200.0 * rho_c));
