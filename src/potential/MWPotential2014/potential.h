@@ -341,13 +341,13 @@ static INLINE void potential_init_backend(
   /* Define the default value */
   static const double c_200_default = 15.3;
   static const double M_200_default = 80.0; // 10^10 M_sol
-  static const double H_default = 0.048427649206650186; 
+  static const double H_default = 4843.438551017651; 
   static const double Mdisk_default = 6.8; // 10^10 M_sol
   static const double Rdisk_default = 3.0; // kpc
   static const double Zdisk_default = 0.280; // kpc
   static const double amplitude_default = 1.0;
   static const double r_1_default = 1.0;
-  static const double alpha_default = -1.8;
+  static const double alpha_default = 1.8;
   static const double r_c_default = 1.9;
   potential->f[0] = 0.35;
   potential->f[1] = 0.60;
