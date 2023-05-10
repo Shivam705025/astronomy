@@ -35,12 +35,16 @@ struct mhd_part_data {
   float curl_B[3];
 
   float mon_est_B[3];
-  /*union{
+
+  float sol_est_B[3];
+/*union{
      float B_mon;
      float divB;
   };
   */
   float tot_mag_F[3];
+
+  float tot_hydro_F[3];
 
   float psi_over_ch;
 

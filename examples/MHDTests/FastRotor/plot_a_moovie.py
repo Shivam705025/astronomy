@@ -6,9 +6,9 @@ import shutil
 import glob
 
 the_folder=''
-folder_to_save='movie_Log_err_Quintic_2x2x1_dedner=1.0_eta=1.36_cmap=viridis'
-snapshot_key='OrszagTangVortex_'
-parameter_file='OrszagTangVortex.yml'
+folder_to_save='movie_normal'
+snapshot_key='FastRotor_LR_'
+parameter_file='FastRotor.yml'
 statistics_file='statistics.txt'
 
 #getting snapshot addresses

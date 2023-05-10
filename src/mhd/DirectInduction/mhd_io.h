@@ -80,7 +80,11 @@ INLINE static int mhd_write_particles(const struct part* parts,
       "CurlB", FLOAT, 3,UNIT_CONV_MAGNETIC_DIVERGENCE, 1.f, parts, mhd_data.curl_B, "Rotor the B field");
   list[6] = io_make_output_field(
       "Fmag", FLOAT, 3,UNIT_CONV_MAGNETIC_DIVERGENCE, 1.f, parts, mhd_data.tot_mag_F, "Total magnetic force");
-  return 7;
+  list[7] = io_make_output_field(
+      "SolenoidalPartB", FLOAT, 3,UNIT_CONV_MAGNETIC_FIELD, 1.f, parts, mhd_data.sol_est_B, "Solenoidal part of the B field");
+  list[8] = io_make_output_field(
+      "Fhyd", FLOAT, 3,UNIT_CONV_MAGNETIC_DIVERGENCE, 1.f, parts, mhd_data.tot_hydro_F, "Total magnetic force");
+return 9;
 }
 
 /**
