@@ -339,9 +339,9 @@ static INLINE void potential_init_backend(
       parameter_file, "MWPotential2014Potential:useabspos");
   
   /* Define the default value */
-  static const double c_200_default = 15.3;
-  static const double M_200_default = 80.0; // 10^10 M_sol
-  static const double H_default = 0.04843438551017651; 
+  static const double c_200_default = 9.823403437774843;
+  static const double M_200_default = 147.41031542774076; // 10^10 M_sol
+  static const double H_default = 0.12779589797702284; 
   static const double Mdisk_default = 6.8; // 10^10 M_sol
   static const double Rdisk_default = 3.0; // kpc
   static const double Zdisk_default = 0.280; // kpc
@@ -349,9 +349,9 @@ static INLINE void potential_init_backend(
   static const double r_1_default = 1.0;
   static const double alpha_default = 1.8;
   static const double r_c_default = 1.9;
-  potential->f[0] = 0.35;
-  potential->f[1] = 0.60;
-  potential->f[2] = 0.05;
+  potential->f[0] = 0.4367419745056084;
+  potential->f[1] = 1.002641971008805;
+  potential->f[2] = 0.022264787598364262;
   
   if (!useabspos) {
     potential->x[0] += s->dim[0] / 2.;
