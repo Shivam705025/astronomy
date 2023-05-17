@@ -130,9 +130,9 @@ plt.close()
 
 #%%Saves our data to be the reference ones (precomputed)
 # Uncomment only if corrections of the precomputed data must occur !
-# Original data
+# Original data :  If some corrections occur in the potential default parameters, allows to correct 
+#the data
 # filename = "original_radii.txt"  
-#If some corrections occur in the potential default parameters, allows to correct the data
 # np.savetxt(filename, (r_1, r_2, r_3))
 
 #%%Make a comparison with the obtained data and ours to check nothing is broken
