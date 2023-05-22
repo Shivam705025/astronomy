@@ -205,7 +205,7 @@ struct bpart {
 
   /*! The normalized spin/angular momentum vector of the BH */
   float angular_momentum_direction[3];
-    
+
   /* The current jet direction. */
   float jet_direction[3];
 
@@ -254,7 +254,7 @@ struct bpart {
 
   /*! Halo mass the black hole is assigned to */
   float group_mass;
-    
+
   /*! The density and sound speed of hot gas used to calculate variable
    *  jet velocities. */
   float rho_gas_hot;

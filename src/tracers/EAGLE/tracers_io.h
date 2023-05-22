@@ -187,7 +187,7 @@ __attribute__((always_inline)) INLINE static int tracers_write_particles(
       convert_part_averaged_SFR,
       "Star formation rates of the particles averaged over the period set by "
       "the first two snapshot triggers");
-    
+
   if (with_jets) {
     list[11] = io_make_output_field(
         "KickedByJetFeedback", CHAR, 1, UNIT_CONV_NO_UNITS, 0.f, xparts,
@@ -222,7 +222,7 @@ __attribute__((always_inline)) INLINE static int tracers_write_particles(
           "feedback while they were still gas particles. "
           "-1 if a particle has never been hit by feedback");
     }
-      
+
     list[14] = io_make_output_field("LastAGNJetKickVelocities", FLOAT, 1,
                                     UNIT_CONV_VELOCITY, 0.f, xparts,
                                     tracers_data.last_jet_kick_velocity,
@@ -335,7 +335,7 @@ __attribute__((always_inline)) INLINE static int tracers_write_sparticles(
       "Star formation rates of the particles averaged over the period set by "
       "the first two snapshot triggers when the particle was still a gas "
       "particle.");
-    
+
   if (with_jets) {
     list[14] = io_make_output_field(
         "KickedByJetFeedback", CHAR, 1, UNIT_CONV_NO_UNITS, 0.f, sparts,
@@ -370,7 +370,7 @@ __attribute__((always_inline)) INLINE static int tracers_write_sparticles(
           "feedback while they were still gas particles. "
           "-1 if a particle has never been hit by feedback");
     }
-      
+
     list[17] = io_make_output_field("LastAGNJetKickVelocities", FLOAT, 1,
                                     UNIT_CONV_VELOCITY, 0.f, sparts,
                                     tracers_data.last_jet_kick_velocity,

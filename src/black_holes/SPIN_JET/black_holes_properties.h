@@ -42,11 +42,11 @@ enum AGN_jet_velocity_models {
   AGN_jet_velocity_BH_mass,      /*< Scale the jet velocity with BH mass */
   AGN_jet_velocity_mass_loading, /*< Assume constant mass loading */
   AGN_jet_velocity_local, /*< Scale the jet velocity such that particles clear
-                              the kernel exactly when a new one is launched, 
-                              as well as making sure that the kernel never 
+                              the kernel exactly when a new one is launched,
+                              as well as making sure that the kernel never
                               runs out of particles */
-  AGN_jet_velocity_halo_mass    /*< Scale the jet velocity with halo mass
-                                    (NOT WORKING) */
+  AGN_jet_velocity_halo_mass /*< Scale the jet velocity with halo mass
+                                 (NOT WORKING) */
 };
 
 enum BH_merger_thresholds {
@@ -353,10 +353,10 @@ struct black_holes_props {
 
   /*! The minimal jet velocity to use in the variable-velocity models */
   float v_jet_min;
-    
+
   /*! The maximal jet velocity to use in the variable-velocity models */
   float v_jet_max;
-    
+
   /*! The minimum sound speed of hot gas to count when calculating the
    *  smoothed sound speed of gas in the kernel */
   float sound_speed_hot_gas_min;
@@ -378,7 +378,7 @@ struct black_holes_props {
 
   /*! The jet efficiency to use if fix_jet_efficiency is 1. */
   float jet_efficiency;
-    
+
   /*! The accretion efficiency (suppression of accretion rate) to use in
    *  the thick disc regime (at low Eddington ratios). */
   float accretion_efficiency;
@@ -812,7 +812,7 @@ INLINE static void black_holes_props_init(struct black_holes_props *bp,
     bp->v_jet_min =
         parser_get_param_float(params, "SPINJETAGN:v_jet_min_km_p_s");
     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
-      
+
     bp->v_jet_max =
         parser_get_param_float(params, "SPINJETAGN:v_jet_max_km_p_s");
     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
@@ -826,7 +826,7 @@ INLINE static void black_holes_props_init(struct black_holes_props *bp,
     bp->v_jet_min =
         parser_get_param_float(params, "SPINJETAGN:v_jet_min_km_p_s");
     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
-      
+
     bp->v_jet_max =
         parser_get_param_float(params, "SPINJETAGN:v_jet_max_km_p_s");
     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
@@ -839,22 +839,20 @@ INLINE static void black_holes_props_init(struct black_holes_props *bp,
     bp->v_jet_min =
         parser_get_param_float(params, "SPINJETAGN:v_jet_min_km_p_s");
     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
-      
+
     bp->v_jet_max =
         parser_get_param_float(params, "SPINJETAGN:v_jet_max_km_p_s");
     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
 
     float temp_hot_gas_min =
         parser_get_param_float(params, "SPINJETAGN:temperature_hot_gas_min_K");
-      
-    temp_hot_gas_min /=
-      units_cgs_conversion_factor(us, UNIT_CONV_TEMPERATURE);
-      
+
+    temp_hot_gas_min /= units_cgs_conversion_factor(us, UNIT_CONV_TEMPERATURE);
+
     bp->sound_speed_hot_gas_min =
         sqrtf(hydro_gamma * hydro_gamma_minus_one * temp_hot_gas_min *
               bp->temp_to_u_factor);
 
-      
   } else if (strcmp(temp4, "HaloMass") == 0) {
     error(
         "The scaling of jet velocities with halo mass is currently not "
@@ -896,18 +894,16 @@ INLINE static void black_holes_props_init(struct black_holes_props *bp,
       parser_get_param_float(params, "SPINJETAGN:jet_efficiency");
 
   if (bp->jet_efficiency <= 0.) {
-    error(
-        "The constant jet efficiency parameter must be >0., not %f",
-        bp->jet_efficiency);
+    error("The constant jet efficiency parameter must be >0., not %f",
+          bp->jet_efficiency);
   }
-    
+
   bp->accretion_efficiency =
       parser_get_param_float(params, "SPINJETAGN:accretion_efficiency");
-    
+
   if (bp->accretion_efficiency <= 0.) {
-    error(
-        "The accretion efficiency must be larger than 0., not %f",
-        bp->accretion_efficiency);
+    error("The accretion efficiency must be larger than 0., not %f",
+          bp->accretion_efficiency);
   }
 
   bp->fix_radiative_efficiency =

@@ -322,7 +322,7 @@ __attribute__((always_inline)) INLINE static void black_holes_end_density(
 
   /* For the following, we also have to undo the mass smoothing
    * (N.B.: bp->velocity_gas is in BH frame, in internal units). */
-  if (bp->rho_gas_hot > 0.) 
+  if (bp->rho_gas_hot > 0.)
     bp->sound_speed_gas_hot *= h_inv_dim / bp->rho_gas_hot;
   bp->sound_speed_gas *= h_inv_dim * rho_inv;
   bp->velocity_gas[0] *= h_inv_dim * rho_inv;
@@ -832,7 +832,7 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
   accr_rate = min(accr_rate, props->f_Edd * Eddington_rate);
   bp->accretion_rate = accr_rate;
   bp->eddington_fraction = accr_rate / Eddington_rate;
-    
+
   /* If we are in the thick disc mode, suppress the accretion rate by the
    * accretion efficiency. */
   if (bp->accretion_mode == BH_thick_disc) {
@@ -1216,7 +1216,7 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
      * that the BH wants to heat has been swallowed and thus no longer exists)
      */
     int N_unsuccessful_jet_injections = 0;
-      
+
     /* Store all of this in the black hole for delivery onto the gas. */
     bp->to_distribute.AGN_delta_u_jet = delta_u_jet;
     bp->to_distribute.AGN_number_of_jet_injections = number_of_jet_injections;
@@ -1227,24 +1227,25 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
     for (int i = 0; i < number_of_jet_injections / 2; i++) {
 
       /* If the gas particle that the BH wants to heat has just been swallowed
-       * by the same BH (or if there are no particles in either of the jet 
-       * jet rays, i.e. on either side of the BH hemisphere), increment the 
-       * counter of unsuccessful injections. If the particle has not been 
-       * swallowed by the BH and both hemispheres are populated, the energy 
+       * by the same BH (or if there are no particles in either of the jet
+       * jet rays, i.e. on either side of the BH hemisphere), increment the
+       * counter of unsuccessful injections. If the particle has not been
+       * swallowed by the BH and both hemispheres are populated, the energy
        * to be deposited will be subracted from the jet reservoir. */
 
-      if ((bp->rays_jet[i].id_min_length != -1) && (bp->rays_jet_pos[i].id_min_length != -1)) {
-          
+      if ((bp->rays_jet[i].id_min_length != -1) &&
+          (bp->rays_jet_pos[i].id_min_length != -1)) {
+
         /* Neither hemisphere of the BH is empty, nor have any particles been
          * swallowed, so we can safely deposity the jet energy. */
         Jet_energy_deposited += delta_u_jet * bp->rays_jet[i].mass;
         Jet_energy_deposited += delta_u_jet * bp->rays_jet_pos[i].mass;
-          
+
       } else {
-          
+
         /* Track how many unsuccessful jet injections happened. */
         N_unsuccessful_jet_injections += 2;
-          
+
         /* Reduce the number of jet injections to be handed out. */
         bp->to_distribute.AGN_number_of_jet_injections -= 2;
       }
@@ -1262,15 +1263,14 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
      * this BH has not been swallowed by the same BH). */
     const int N_successful_jet_injections =
         number_of_jet_injections - N_unsuccessful_jet_injections;
-      
-    /* If we will be kicking something, choose a new direction for the jets. 
-     * This is done by randomly generating a unit vector within a cone of a 
+
+    /* If we will be kicking something, choose a new direction for the jets.
+     * This is done by randomly generating a unit vector within a cone of a
      * given opening angle around the BH spin vector. */
-    if (N_successful_jet_injections > 0 ) {
-      random_direction_in_cone(bp->id, ti_begin,
-                               random_number_BH_kick, props->opening_angle,
-                               bp->angular_momentum_direction,
-                               bp->jet_direction);
+    if (N_successful_jet_injections > 0) {
+      random_direction_in_cone(
+          bp->id, ti_begin, random_number_BH_kick, props->opening_angle,
+          bp->angular_momentum_direction, bp->jet_direction);
     }
 
     /* Increase the number of jet energy injections the black hole has kicked
@@ -1522,7 +1522,7 @@ INLINE static void black_holes_create_from_gas(
   bp->angular_momentum_direction[0] = rand_sin_theta * cos(rand_phi);
   bp->angular_momentum_direction[1] = rand_sin_theta * sin(rand_phi);
   bp->angular_momentum_direction[2] = rand_cos_theta;
-    
+
   /* Point the jets in the same direction to begin with */
   bp->jet_direction[0] = bp->angular_momentum_direction[0];
   bp->jet_direction[1] = bp->angular_momentum_direction[1];

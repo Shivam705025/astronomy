@@ -214,7 +214,7 @@ static INLINE void tracers_first_init_xpart(
 
   xp->tracers_data.last_AGN_injection_scale_factor = -1.f;
   xp->tracers_data.density_at_last_AGN_feedback_event = -1.f;
-    
+
   xp->tracers_data.hit_by_jet_feedback = 0;
   xp->tracers_data.jet_feedback_energy = 0.f;
   xp->tracers_data.last_AGN_jet_feedback_scale_factor = 0.f;
@@ -323,7 +323,8 @@ static INLINE void tracers_after_black_holes_feedback(
 
 static INLINE void tracers_after_jet_feedback(
     const struct part *p, struct xpart *xp, const int with_cosmology,
-    const float scale_factor, const double time, const double delta_energy, const float vel_kick) {
+    const float scale_factor, const double time, const double delta_energy,
+    const float vel_kick) {
 
   if (with_cosmology)
     xp->tracers_data.last_AGN_jet_feedback_scale_factor = scale_factor;

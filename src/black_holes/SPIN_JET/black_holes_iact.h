@@ -101,7 +101,7 @@ runner_iact_nonsym_bh_gas_density(
 
   /* Contribution to the smoothed sound speed */
   bi->sound_speed_gas += mj * cj * wi;
-    
+
   if (cj * cosmo->a_factor_sound_speed > bh_props->sound_speed_hot_gas_min) {
     bi->sound_speed_gas_hot += mj * cj * wi;
     bi->rho_gas_hot += mj * wi;
@@ -370,7 +370,7 @@ runner_iact_nonsym_bh_gas_density(
   }
 
   /* Do the actual minimization. */
-  if (cosine_theta < 0) {  
+  if (cosine_theta < 0) {
     ray_minimise_distance(quantity_to_minimize, bi->rays_jet, arr_size_jet,
                           gas_id, pj->mass);
   } else {
@@ -1007,7 +1007,7 @@ runner_iact_nonsym_bh_gas_feedback(
       /* Compute velocity kick direction using the previously generated
        * jet direction.*/
       float vel_kick_direction[3];
-        
+
       /* Include the -1./1. factor (direction) which accounts for kicks in the
        * opposite direction of the spin vector */
       vel_kick_direction[0] = direction * bi->jet_direction[0];
