@@ -836,6 +836,7 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
   /* If we are in the thick disc mode, suppress the accretion rate by the
    * accretion efficiency. */
   if (bp->accretion_mode == BH_thick_disc) {
+    accr_rate*= props->accretion_efficiency;
     bp->accretion_rate *= props->accretion_efficiency;
     bp->eddington_fraction *= props->accretion_efficiency;
   }
