@@ -142,6 +142,8 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
     double time, const struct external_potential* restrict potential,
     const struct phys_const* restrict phys_const,
     const struct gpart* restrict g) {
+  
+#ifdef HAVE_LIBGSL
 
   const float dx = g->x[0] - potential->x[0];
   const float dy = g->x[1] - potential->x[1];
@@ -187,6 +189,11 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
   const float time_step = potential->timestep_mult * period;
 
   return max(time_step, potential->mintime);
+
+#else
+  error("Code not compiled with GSL. Can't compute MWPotential2014.");
+  return 0.0 ;
+#endif
 }
 
 /**
@@ -212,6 +219,8 @@ __attribute__((always_inline)) INLINE static float external_gravity_timestep(
 __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
     double time, const struct external_potential* restrict potential,
     const struct phys_const* restrict phys_const, struct gpart* restrict g) {
+
+#ifdef HAVE_LIBGSL
 
   const float dx = g->x[0] - potential->x[0];
   const float dy = g->x[1] - potential->x[1];
@@ -260,6 +269,11 @@ __attribute__((always_inline)) INLINE static void external_gravity_acceleration(
   g->a_grav[1] -= potential->f[2] * dpot_dr * dy * r_inv;
   g->a_grav[2] -= potential->f[2] * dpot_dr * dz * r_inv;
   gravity_add_comoving_potential(g, potential->f[2] * pot_psc);
+
+#else
+  error("Code not compiled with GSL. Can't compute MWPotential2014.");
+#endif
+
 }
 
 /**
@@ -281,6 +295,8 @@ __attribute__((always_inline)) INLINE static float
 external_gravity_get_potential_energy(
     double time, const struct external_potential* potential,
     const struct phys_const* const phys_const, const struct gpart* g) {
+
+#ifdef HAVE_LIBGSL
 
   const float dx = g->x[0] - potential->x[0];
   const float dy = g->x[1] - potential->x[1];
@@ -314,6 +330,11 @@ external_gravity_get_potential_energy(
   return phys_const->const_newton_G *
          (potential->f[0] * pot_nfw + potential->f[1] * mn_pot +
           potential->f[2] * psc_pot);
+
+#else
+  error("Code not compiled with GSL. Can't compute MWPotential2014.");
+  return 0.0 ;
+#endif
 }
 
 /**
@@ -329,6 +350,8 @@ static INLINE void potential_init_backend(
     struct swift_params* parameter_file, const struct phys_const* phys_const,
     const struct unit_system* us, const struct space* s,
     struct external_potential* potential) {
+
+#ifdef HAVE_LIBGSL
 
   /* Read in the position of the centre of potential */
   parser_get_param_double_array(
@@ -429,6 +452,9 @@ static INLINE void potential_init_backend(
   potential->mintime = 2. * M_PI * potential->eps * sqrtf(potential->eps) *
                        sqrtf(potential->log_c200_term / epslnthing) / sqrtgm *
                        potential->timestep_mult;
+#else
+  error("Code not compiled with GSL. Can't compute MWPotential2014.");
+#endif
 }
 
 /**
