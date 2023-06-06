@@ -62,7 +62,7 @@ AX_COMPILER_VERSION
 # Check whether we have a recent enough GCC
 if test "$ax_cv_c_compiler_vendor" = "gnu"; then
    AX_COMPARE_VERSION([$ax_cv_c_compiler_version], [ge], [8.1.0],
-                      [gcc_handles_avx512="yes"],
+		      [gcc_handles_avx512="yes"],
 		      [gcc_handles_avx512="no"])
 fi
 
@@ -71,8 +71,8 @@ AC_C_RESTRICT
 
 # CSDS
 AC_ARG_ENABLE([csds],
-        [AS_HELP_STRING([--enable-csds],
-	        [enable the Continuous Simulation Data Stream]
+	[AS_HELP_STRING([--enable-csds],
+		[enable the Continuous Simulation Data Stream]
 	)],
 	[with_csds="${enableval}"],
 	[with_csds="no"]
@@ -146,7 +146,7 @@ AC_ARG_ENABLE([mpi],
     [enable_mpi="$enableval"],
     [enable_mpi="yes"]
 )
-# Use extra flags set by AC_PROG_CC as part of $CC. Currently undocumented as ac_cv_prog_cc_stdc,
+# Use extra flags set by AC_PROG_CC as part of $CC. Currently undocumented as ac_cv_prog_cc_stdc, 
 # so could change.
 good_mpi="yes"
 if test "$enable_mpi" = "yes"; then
@@ -175,33 +175,33 @@ if test "$enable_mpi" = "yes"; then
        version=`$MPIRUN -version 2>&1`
        case "$version" in
          *Intel*MPI*)
-	    MPI_THREAD_LIBS="-mt_mpi"
-	    MPI_LIBRARY="Intel MPI"
-	    AC_MSG_RESULT([Intel MPI])
-	 ;;
-	 *Platform*)
-	    MPI_THREAD_LIBS="-lmtmpi"
-	    MPI_LIBRARY="PLATFORM MPI"
-	    AC_MSG_RESULT([PLATFORM MPI])
-	 ;;
-	 *"Open MPI"*)
-	    MPI_THREAD_LIBS=""
-	    MPI_LIBRARY="Open MPI"
-	    AC_MSG_RESULT([Open MPI])
-	    #  OpenMPI should be 1.8.6 or later, if not complain.
-	    #  Version is last word on first line of -version output.
-	    revision=`mpirun -version 2>&1 | grep "Open MPI" | awk '{print $NF}'`
-	    AX_COMPARE_VERSION( $revision, [ge], [1.8.6],,[good_mpi="no"] )
-	    if test "$good_mpi" = "no"; then
-	        AC_MSG_WARN([
+            MPI_THREAD_LIBS="-mt_mpi"
+            MPI_LIBRARY="Intel MPI"
+            AC_MSG_RESULT([Intel MPI])
+         ;;
+         *Platform*)
+            MPI_THREAD_LIBS="-lmtmpi"
+            MPI_LIBRARY="PLATFORM MPI"
+            AC_MSG_RESULT([PLATFORM MPI])
+         ;;
+         *"Open MPI"*)
+            MPI_THREAD_LIBS=""
+            MPI_LIBRARY="Open MPI"
+            AC_MSG_RESULT([Open MPI])
+            #  OpenMPI should be 1.8.6 or later, if not complain.
+            #  Version is last word on first line of -version output.
+            revision=`mpirun -version 2>&1 | grep "Open MPI" | awk '{print $NF}'`
+            AX_COMPARE_VERSION( $revision, [ge], [1.8.6],,[good_mpi="no"] )
+            if test "$good_mpi" = "no"; then
+                AC_MSG_WARN([
     Open MPI version should be at least 1.8.6 (is $revision)])
                 enable_mpi="yes (but with warning)"
-		fi
-	 ;;
-	 *)
-	    MPI_THREAD_LIBS=""
-	    AC_MSG_RESULT([unknown])
-	 ;;
+            fi
+         ;;
+         *)
+            MPI_THREAD_LIBS=""
+            AC_MSG_RESULT([unknown])
+         ;;
        esac
        AC_SUBST([MPI_THREAD_LIBS])
     fi
@@ -230,7 +230,7 @@ if test "x$enable_debug" = "xyes"; then
       # but that doesn't always work.
       AX_CHECK_COMPILE_FLAG([-gdwarf -fvar-tracking-assignments],
         [inline_EXTRA_FLAGS="-gdwarf -fvar-tracking-assignments"],
-	[inline_EXTRA_FLAGS="-gdwarf-2 -fvar-tracking-assignments"])
+        [inline_EXTRA_FLAGS="-gdwarf-2 -fvar-tracking-assignments"])
       CFLAGS="$CFLAGS $inline_EXTRA_FLAGS"
    elif test "$ax_cv_c_compiler_vendor" = "intel"; then
       CFLAGS="$CFLAGS -debug inline-debug-info"
@@ -582,8 +582,8 @@ if test "$enable_opt" = "yes" ; then
    # Choose the best flags for the gravity sub-library on this compiler and architecture
    if test "$ax_cv_c_compiler_vendor" = "intel"; then
       case "$icc_flags" in
-         *CORE-AVX512*)
-	    GRAVITY_CFLAGS="$GRAVITY_CFLAGS -qopt-zmm-usage=high"
+      	 *CORE-AVX512*)
+            GRAVITY_CFLAGS="$GRAVITY_CFLAGS -qopt-zmm-usage=high"
 	    ;;
 	 *)
 	    AC_MSG_WARN([No additional flags needed for gravity on this platform])
@@ -593,12 +593,12 @@ if test "$enable_opt" = "yes" ; then
       if test "$gcc_handles_avx512" = "yes"; then
          case "$ax_gcc_arch" in
 	    *skylake-avx512*)
-	       GRAVITY_CFLAGS="$GRAVITY_CFLAGS -mprefer-vector-width=512"
+               GRAVITY_CFLAGS="$GRAVITY_CFLAGS -mprefer-vector-width=512"
 	       ;;
 	    *)
 	       AC_MSG_WARN([No additional flags needed for gravity on this platform])
 	       ;;
-	 esac
+         esac
       else
          AC_MSG_WARN([No additional flags needed for gravity on this platform])
       fi
@@ -606,7 +606,7 @@ if test "$enable_opt" = "yes" ; then
       AC_MSG_WARN([Do not know what best gravity vectorization flags to choose for this compiler])
    fi
    AC_ARG_VAR([GRAVITY_CFLAGS], [C compiler flags added to the basic CFLAGS to compile
-                                 the gravity-related files.])
+   				 the gravity-related files.])
 
    # Check SSE & AVX support (some overlap with AX_CC_MAXOPT).
    # Don't use the SIMD_FLAGS result with Intel compilers. The -x<code>
@@ -620,14 +620,14 @@ if test "$enable_opt" = "yes" ; then
 
    if test "$enable_vec" = "no"; then
       if test "$ax_cv_c_compiler_vendor" = "intel"; then
-         CFLAGS="$CFLAGS -no-vec -no-simd"
-	 AC_MSG_RESULT([disabled Intel vectorization])
+      	 CFLAGS="$CFLAGS -no-vec -no-simd"
+      	 AC_MSG_RESULT([disabled Intel vectorization])
       elif test "$ax_cv_c_compiler_vendor" = "gnu"; then
-         CFLAGS="$CFLAGS -fno-tree-vectorize"
-	 AC_MSG_RESULT([disabled GCC vectorization])
+      	 CFLAGS="$CFLAGS -fno-tree-vectorize"
+      	 AC_MSG_RESULT([disabled GCC vectorization])
       elif test "$ax_cv_c_compiler_vendor" = "clang"; then
          CFLAGS="$CFLAGS -fno-vectorize -fno-slp-vectorize"
-	 AC_MSG_RESULT([disabled clang vectorization])
+         AC_MSG_RESULT([disabled clang vectorization])
       else
          AC_MSG_WARN([Do not know how to disable vectorization for this compiler])
       fi
@@ -695,8 +695,8 @@ fi
 
 # MPI mesh gravity
 AC_ARG_ENABLE([mpi-mesh-gravity],
-        [AS_HELP_STRING([--enable-mpi-mesh-gravity],
-	        [enable parallel mesh gravity (requires FFTW MPI library) @<:@no/yes@:>@]
+	[AS_HELP_STRING([--enable-mpi-mesh-gravity],
+		[enable parallel mesh gravity (requires FFTW MPI library) @<:@no/yes@:>@]
 	)],
 	[with_mpi_mesh_gravity="${enableval}"],
 	[with_mpi_mesh_gravity="no"]
@@ -734,17 +734,17 @@ if test "x$with_gsl" != "xno"; then
       AC_CHECK_LIB([gslcblas],[cblas_dgemm],[have_gsl="yes"],[have_gsl="no"],$GSL_LIBS)
       if test "x$have_gsl" != "xno"; then
          AC_DEFINE([HAVE_LIBGSLCBLAS],1,[The GSL CBLAS library appears to be present.])
-	 AC_CHECK_LIB([gsl],[gsl_integration_qag],
-	    AC_DEFINE([HAVE_LIBGSL],1,[The GSL library appears to be present.]),
-	    [have_gsl="no"],$GSL_LIBS)
+         AC_CHECK_LIB([gsl],[gsl_integration_qag],
+            AC_DEFINE([HAVE_LIBGSL],1,[The GSL library appears to be present.]),
+            [have_gsl="no"],$GSL_LIBS)
       fi
    else
       AC_CHECK_LIB([gslcblas],[cblas_dgemm],
          AC_DEFINE([HAVE_LIBGSLCBLAS],1,[The GSL CBLAS library appears to be present.]),
-	 AC_MSG_ERROR(something is wrong with the GSL CBLAS library!), $GSL_LIBS)
+         AC_MSG_ERROR(something is wrong with the GSL CBLAS library!), $GSL_LIBS)
       AC_CHECK_LIB([gsl],[gsl_integration_qag],
          AC_DEFINE([HAVE_LIBGSL],1,[The GSL library appears to be present.]),
-	 AC_MSG_ERROR(something is wrong with the GSL library!), $GSL_LIBS)
+         AC_MSG_ERROR(something is wrong with the GSL library!), $GSL_LIBS)
       have_gsl="yes"
    fi
    if test "$have_gsl" = "no"; then
@@ -767,7 +767,7 @@ AX_PTHREAD([LIBS="$PTHREAD_LIBS $LIBS" CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
 # Check whether POSIX thread barriers are implemented (e.g. OSX does not have them)
 have_pthread_barrier="no"
 AC_CHECK_LIB(pthread, pthread_barrier_init,
-             have_pthread_barrier="yes",
+	     have_pthread_barrier="yes",
 	     AC_MSG_WARN(POSIX implementation does not have barriers. SWIFT will use home-made ones.))
 if test "x$have_pthread_barrier" = "xyes"; then
   AC_DEFINE([HAVE_PTHREAD_BARRIERS], [1], [The posix library implements barriers])
@@ -775,7 +775,7 @@ fi
 
 # Check whether POSIX file allocation functions exist (e.g. OSX does not have them)
 AC_CHECK_LIB(pthread, posix_fallocate,
-             AC_DEFINE([HAVE_POSIX_FALLOCATE], [1], [The posix library implements file allocation functions.]),
+	     AC_DEFINE([HAVE_POSIX_FALLOCATE], [1], [The posix library implements file allocation functions.]),
 	     AC_MSG_WARN(POSIX implementation does not have file allocation functions.))
 
 # Check for METIS.
@@ -840,10 +840,10 @@ if test "x$with_parmetis" != "xno"; then
 
       if test "x$with_parmetis" != "xyes" -a "x$with_parmetis" != "x"; then
          PARMETIS_LIBS="-L$with_parmetis/lib -lparmetis -lmetis"
-	 PARMETIS_INCS="-I$with_parmetis/include"
+         PARMETIS_INCS="-I$with_parmetis/include"
       else
          PARMETIS_LIBS="-lparmetis -lmetis"
-	 PARMETIS_INCS=""
+         PARMETIS_INCS=""
       fi
       # Note use different function to avoid caching of first check.
       AC_CHECK_LIB([parmetis],[ParMETIS_V3_PartKway], [have_parmetis="yes"],
@@ -899,13 +899,13 @@ if test "x$with_fftw" != "xno"; then
    if test "x$with_fftw" = "xtest"; then
       AC_CHECK_LIB([fftw3],[fftw_malloc],[have_fftw="yes"],[have_fftw="no"],$FFTW_LIBS)
       if test "x$have_fftw" != "xno"; then
-         AC_DEFINE([HAVE_FFTW],1,[The FFTW library appears to be present.])
+      	 AC_DEFINE([HAVE_FFTW],1,[The FFTW library appears to be present.])
       fi
    # FFTW was specified, check that it was a valid location.
    else
       AC_CHECK_LIB([fftw3],[fftw_malloc],
          AC_DEFINE([HAVE_FFTW],1,[The FFTW library appears to be present.]),
-	 AC_MSG_ERROR(something is wrong with the FFTW library!), $FFTW_LIBS)
+         AC_MSG_ERROR(something is wrong with the FFTW library!), $FFTW_LIBS)
       have_fftw="yes"
    fi
 
@@ -921,45 +921,45 @@ if test "x$with_fftw" != "xno"; then
       # Was FFTW's location specifically given?
       if test "x$with_fftw" != "xyes" -a "x$with_fftw" != "xtest" -a "x$with_fftw" != "x"; then
         FFTW_THREADED_LIBS="-L$with_fftw/lib -lfftw3_threads -lfftw3"
-	FFTW_THREADED_INCS="-I$with_fftw/include"
+        FFTW_THREADED_INCS="-I$with_fftw/include"
       else
         FFTW_THREADED_LIBS="-lfftw3_threads -lfftw3"
-	FFTW_THREADED_INCS=""
+        FFTW_THREADED_INCS=""
       fi
 
       # Verify that the library is threaded
       AC_CHECK_LIB([fftw3],[fftw_init_threads],[have_threaded_fftw="yes"],
-                   [have_threaded_fftw="no"], $FFTW_THREADED_LIBS)
+      		   [have_threaded_fftw="no"], $FFTW_THREADED_LIBS)
 
       # If found, update things
       if test "x$have_threaded_fftw" = "xyes"; then
          AC_DEFINE([HAVE_THREADED_FFTW],1,[The threaded FFTW library appears to be present.])
-	 FFTW_LIBS=$FFTW_THREADED_LIBS
-	 FFTW_INCS=$FFTW_THREADED_INCS
+         FFTW_LIBS=$FFTW_THREADED_LIBS
+         FFTW_INCS=$FFTW_THREADED_INCS
 
       else
 
          # Same checks for OpenMP if preferred threaded failed.
-	 if test "x$with_fftw" != "xyes" -a "x$with_fftw" != "xtest" -a "x$with_fftw" != "x"; then
-	    FFTW_OPENMP_LIBS="-L$with_fftw/lib -lfftw3_omp -lfftw3"
-	    FFTW_OPENMP_INCS="-I$with_fftw/include"
-	 else
-	    FFTW_OPENMP_LIBS="-lfftw3_omp -lfftw3"
-	    FFTW_OPENMP_INCS=""
-	 fi
+         if test "x$with_fftw" != "xyes" -a "x$with_fftw" != "xtest" -a "x$with_fftw" != "x"; then
+            FFTW_OPENMP_LIBS="-L$with_fftw/lib -lfftw3_omp -lfftw3"
+            FFTW_OPENMP_INCS="-I$with_fftw/include"
+         else
+            FFTW_OPENMP_LIBS="-lfftw3_omp -lfftw3"
+            FFTW_OPENMP_INCS=""
+         fi
 
          # Verify that the library works. Note requires AC_OPENMP called above.
-	 AC_CHECK_LIB([fftw3],[fftw_init_threads],[have_openmp_fftw="yes"],
-	              [have_openmp_fftw="no"], $FFTW_OPENMP_LIBS)
+         AC_CHECK_LIB([fftw3],[fftw_init_threads],[have_openmp_fftw="yes"],
+		      [have_openmp_fftw="no"], $FFTW_OPENMP_LIBS)
 
          # If found, update things
-	 if test "x$have_openmp_fftw" = "xyes"; then
-	    #  Note OpenMP and pthreads use mostly the same calls, so define both.
-	    AC_DEFINE([HAVE_THREADED_FFTW],1,[The threaded OpenMP FFTW library appears to be present.])
-	    AC_DEFINE([HAVE_OPENMP_FFTW],1,[The OpenMP FFTW library appears to be present.])
-	    FFTW_LIBS=$FFTW_OPENMP_LIBS
-	    FFTW_INCS=$FFTW_OPENMP_INCS
-	 fi
+         if test "x$have_openmp_fftw" = "xyes"; then
+            #  Note OpenMP and pthreads use mostly the same calls, so define both.
+            AC_DEFINE([HAVE_THREADED_FFTW],1,[The threaded OpenMP FFTW library appears to be present.])
+            AC_DEFINE([HAVE_OPENMP_FFTW],1,[The OpenMP FFTW library appears to be present.])
+            FFTW_LIBS=$FFTW_OPENMP_LIBS
+            FFTW_INCS=$FFTW_OPENMP_INCS
+         fi
       fi
 
    fi
@@ -969,10 +969,10 @@ if test "x$with_fftw" != "xno"; then
       # Was FFTW's location specifically given?
       if test "x$with_fftw" != "xyes" -a "x$with_fftw" != "xtest" -a "x$with_fftw" != "x"; then
          FFTW_MPI_LIBS="-L$with_fftw/lib -lfftw3_mpi -lfftw3"
-	 FFTW_MPI_INCS="-I$with_fftw/include"
+         FFTW_MPI_INCS="-I$with_fftw/include"
       else
          FFTW_MPI_LIBS="-lfftw3_mpi -lfftw3"
-	 FFTW_MPI_INCS=""
+         FFTW_MPI_INCS=""
       fi
 
       # Verify that the library has MPI support
@@ -985,8 +985,8 @@ if test "x$with_fftw" != "xno"; then
          AC_DEFINE([HAVE_MPI_FFTW],1,[The MPI FFTW library appears to be present.])
       else
          if test "x$with_mpi_mesh_gravity" = "xyes" ; then
-	    AC_MSG_ERROR("Unable to find FFTW MPI library for MPI mesh gravity")
-	 fi
+            AC_MSG_ERROR("Unable to find FFTW MPI library for MPI mesh gravity")
+         fi
       fi
    fi
 fi
@@ -1014,13 +1014,13 @@ if test "x$with_arm_fftw" != "xno"; then
    if test "x$with_arm_fftw" = "xtest"; then
       AC_CHECK_LIB([armpl_lp64],[fftw_malloc],[have_fftw="yes"],[have_fftw="no"],$FFTW_LIBS)
       if test "x$have_arm_fftw" != "xno"; then
-         AC_DEFINE([HAVE_FFTW],1,[The FFTW library appears to be present.])
+      	 AC_DEFINE([HAVE_FFTW],1,[The FFTW library appears to be present.])
       fi
    # FFTW was specified, check that it was a valid location.
    else
       AC_CHECK_LIB([armpl_lp64],[fftw_malloc],
          AC_DEFINE([HAVE_FFTW],1,[The FFTW library appears to be present.]),
-	 AC_MSG_ERROR(something is wrong with the FFTW library!), $FFTW_LIBS)
+         AC_MSG_ERROR(something is wrong with the FFTW library!), $FFTW_LIBS)
    fi
 
    # FFTW was requested not to be used.
@@ -1035,10 +1035,10 @@ if test "x$with_arm_fftw" != "xno"; then
       # Was FFTW's location specifically given?
       if test "x$with_arm_fftw" != "xyes" -a "x$with_arm_fftw" != "xtest" -a "x$with_arm_fftw" != "x"; then
         FFTW_THREADED_LIBS="-L$with_arm_fftw/lib -larmpl_lp64_threads -larmpl_lp64"
-	FFTW_THREADED_INCS="-I$with_arm_fftw/include"
+        FFTW_THREADED_INCS="-I$with_arm_fftw/include"
       else
         FFTW_THREADED_LIBS="-larmpl_lp64_threads -larmpl_lp64"
-	FFTW_THREADED_INCS=""
+        FFTW_THREADED_INCS=""
       fi
 
       # Verify that the library is threaded
@@ -1048,9 +1048,9 @@ if test "x$with_arm_fftw" != "xno"; then
       # If found, update things
       if test "x$have_threaded_fftw" = "xyes"; then
          AC_DEFINE([HAVE_THREADED_FFTW],1,[The threaded FFTW library appears to be present.])
-	 FFTW_LIBS=$FFTW_THREADED_LIBS
-	 FFTW_INCS=$FFTW_THREADED_INCS
-	 have_fftw="yes - ARM - threaded"
+         FFTW_LIBS=$FFTW_THREADED_LIBS
+         FFTW_INCS=$FFTW_THREADED_INCS
+         have_fftw="yes - ARM - threaded"
       fi
    fi
 fi
@@ -1137,8 +1137,8 @@ if test "x$with_tcmalloc" != "xno"; then
       # Prevent compilers that replace the calls with built-ins (GNU 99) from doing so.
       case "$ax_cv_c_compiler_vendor" in
         intel | gnu | clang)
-	     CFLAGS="$CFLAGS -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free"
-	  ;;
+             CFLAGS="$CFLAGS -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free"
+          ;;
       esac
 
    else
@@ -1180,8 +1180,8 @@ if test "x$with_jemalloc" != "xno"; then
       # Prevent compilers that replace the regular calls with built-ins (GNU 99) from doing so.
       case "$ax_cv_c_compiler_vendor" in
         intel | gnu | clang)
-	     CFLAGS="$CFLAGS -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free"
-	  ;;
+             CFLAGS="$CFLAGS -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free"
+          ;;
       esac
 
    else
@@ -1223,8 +1223,8 @@ if test "x$with_tbbmalloc" != "xno"; then
       # Prevent compilers that replace the calls with built-ins (GNU 99) from doing so.
       case "$ax_cv_c_compiler_vendor" in
         intel | gnu | clang)
-	     CFLAGS="$CFLAGS -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free"
-	  ;;
+             CFLAGS="$CFLAGS -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free"
+          ;;
       esac
 
    else
@@ -1267,21 +1267,21 @@ if test "$with_hdf5" = "yes"; then
     if test "$enable_parallel_hdf5" = "yes"; then
         AC_MSG_CHECKING([for HDF5 parallel support])
 
-        # Check if the library is capable, the header should define H5_HAVE_PARALLEL.
-	old_CPPFLAGS="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $HDF5_CPPFLAGS"
-	AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-	#include "hdf5.h"
-	#ifndef H5_HAVE_PARALLEL
-	# error macro not defined
-	#endif
-	]])], [parallel="yes"], [parallel="no"])
-	if test "$parallel" = "yes"; then
-	    have_parallel_hdf5="yes"
-	    AC_DEFINE([HAVE_PARALLEL_HDF5],1,[HDF5 library supports parallel access])
-	fi
-	AC_MSG_RESULT($parallel)
-	CPPFLAGS="$old_CPPFLAGS"
+	# Check if the library is capable, the header should define H5_HAVE_PARALLEL.
+        old_CPPFLAGS="$CPPFLAGS"
+        CPPFLAGS="$CPPFLAGS $HDF5_CPPFLAGS"
+        AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+        #include "hdf5.h"
+        #ifndef H5_HAVE_PARALLEL
+        # error macro not defined
+        #endif
+        ]])], [parallel="yes"], [parallel="no"])
+        if test "$parallel" = "yes"; then
+            have_parallel_hdf5="yes"
+            AC_DEFINE([HAVE_PARALLEL_HDF5],1,[HDF5 library supports parallel access])
+        fi
+        AC_MSG_RESULT($parallel)
+        CPPFLAGS="$old_CPPFLAGS"
     fi
 fi
 AM_CONDITIONAL([HAVEPARALLELHDF5],[test "$have_parallel_hdf5" = "yes"])
@@ -1472,7 +1472,7 @@ if test "$enable_lightcone" = "yes"; then
    # Also need to make sure we have GSL if we're making lightcones
    if test "$have_gsl" != "yes"; then
       AC_MSG_ERROR([Lightcone output requires GSL. Please configure with --with-gsl.])
-   fi
+   fi   
 else
    have_chealpix="no"
 fi
@@ -1503,10 +1503,10 @@ if test "$ac_cv_func_pthread_setaffinity_np" = "yes" -a "x$with_numa" != "xno"; 
 
     if test "x$with_numa" != "xyes" -a "x$with_numa" != "x"; then
         NUMA_LIBS="-L$with_numa/lib -lnuma"
-	NUMA_INCS="-I$with_numa/include"
+        NUMA_INCS="-I$with_numa/include"
     else
         NUMA_LIBS="-lnuma"
-	NUMA_INCS=""
+        NUMA_INCS=""
     fi
 
     #  Test for header file.
@@ -1517,17 +1517,17 @@ if test "$ac_cv_func_pthread_setaffinity_np" = "yes" -a "x$with_numa" != "xno"; 
     if test "$ac_cv_header_numa_h" = "yes"; then
 
         #  If NUMA location is specified check if we have it.
-	if test "x$with_numa" != "xyes" -a "x$with_numa" != "x"; then
-	    AC_CHECK_LIB([numa],[numa_available],
-	        AC_DEFINE([HAVE_LIBNUMA],1,[The NUMA library appears to be present.]),
-		AC_MSG_ERROR(something is wrong with the NUMA library!), $NUMA_LIBS)
-		have_numa="yes"
-	else
-	    AC_CHECK_LIB([numa],[numa_available],[have_numa="yes"],[have_numa="no"],$NUMA_LIBS)
-	    if test "x$have_numa" != "xno"; then
-	        AC_DEFINE([HAVE_LIBNUMA],1,[The NUMA library appears to be present.])
-		fi
-	fi
+        if test "x$with_numa" != "xyes" -a "x$with_numa" != "x"; then
+            AC_CHECK_LIB([numa],[numa_available],
+                AC_DEFINE([HAVE_LIBNUMA],1,[The NUMA library appears to be present.]),
+                AC_MSG_ERROR(something is wrong with the NUMA library!), $NUMA_LIBS)
+            have_numa="yes"
+        else
+            AC_CHECK_LIB([numa],[numa_available],[have_numa="yes"],[have_numa="no"],$NUMA_LIBS)
+            if test "x$have_numa" != "xno"; then
+                AC_DEFINE([HAVE_LIBNUMA],1,[The NUMA library appears to be present.])
+            fi
+        fi
     fi
 
     #  We can live without this.
@@ -1540,10 +1540,10 @@ AC_SUBST([NUMA_LIBS])
 
 
 # Check for Sundials (required for the SPHM1RT library).
-# There is a problems with the headers of this library
-# as they do not pass the strict prototypes check when
-# installed outside of the system directories. So we
-# need to do this check in two phases.
+# There is a problems with the headers of this library 
+# as they do not pass the strict prototypes check when 
+# installed outside of the system directories. So we 
+# need to do this check in two phases. 
 have_sundials="no"
 SUNDIALS_LIBS=""
 SUNDIALS_INCS=""
@@ -1572,23 +1572,23 @@ if test "x$with_sundials" != "xno"; then
       AC_DEFINE([HAVE_SUNDIALS],1,[The SUNDIALS library is present.])
    else
       if test "x$with_sundials" != "xyes" -a "x$with_sundials" != "x"; then
-         # It might be that the libraries are in
-	 # /lib64 rather than /lib
-	 SUNDIALS_LIBS="-L$with_sundials/lib64 -lsundials_cvode -lsundials_nvecserial -lsundials_sunlinsoldense -lsundials_sunmatrixdense"
+      	 # It might be that the libraries are in 
+      	 # /lib64 rather than /lib 
+      	 SUNDIALS_LIBS="-L$with_sundials/lib64 -lsundials_cvode -lsundials_nvecserial -lsundials_sunlinsoldense -lsundials_sunmatrixdense"
 
-         # unset cached result of previous AC_CHECK_LIB
+	 # unset cached result of previous AC_CHECK_LIB
 	 unset ac_cv_lib_sundials_cvode_CVode
 
-         AC_CHECK_LIB([sundials_cvode], [CVode], [have_sundials="yes"], [have_sundials="no"], $SUNDIALS_LIBS)
-
-         if test "$have_sundials" == "yes"; then
-	    AC_DEFINE([HAVE_SUNDIALS],1,[The SUNDIALS library is present.])
-	 else
+   	 AC_CHECK_LIB([sundials_cvode], [CVode], [have_sundials="yes"], [have_sundials="no"], $SUNDIALS_LIBS)      
+	 
+   	 if test "$have_sundials" == "yes"; then
+      	    AC_DEFINE([HAVE_SUNDIALS],1,[The SUNDIALS library is present.])
+	 else 
 	    AC_MSG_ERROR("Failed to find a SUNDIALS library")
-	 fi
+	 fi 
 
-      else
-         AC_MSG_ERROR("Failed to find a SUNDIALS library")
+      else 
+      	 AC_MSG_ERROR("Failed to find a SUNDIALS library")
       fi
    fi
 fi
@@ -1611,7 +1611,7 @@ AC_CHECK_HEADERS([altivec.h], [], [],
 AC_CHECK_HEADERS_ONCE([sys/time.h])
 if test $ac_cv_header_sys_time_h = yes; then
   AC_DEFINE([TIME_WITH_SYS_TIME],[1],[Define to 1 if you can safely include both <sys/time.h>
-             and <time.h>.  This macro is obsolete.])
+	     and <time.h>.  This macro is obsolete.])
 fi
 
 AC_CHECK_HEADERS([sys/time.h], [], [],
@@ -1654,12 +1654,12 @@ AC_MSG_RESULT($rtc_ok)
 # Special timers for the ARM v7 platforms (taken from FFTW-3 to match their cycle.h)
 AC_ARG_ENABLE(armv7a-cntvct, [AS_HELP_STRING([--enable-armv7a-cntvct],[enable the cycle counter on Armv7a via the CNTVCT register])], have_armv7acntvct=$enableval)
 if test "$have_armv7acntvct"x = "yes"x; then
-        AC_DEFINE(HAVE_ARMV7A_CNTVCT,1,[Define if you have enabled the CNTVCT cycle counter on ARMv7a])
+	AC_DEFINE(HAVE_ARMV7A_CNTVCT,1,[Define if you have enabled the CNTVCT cycle counter on ARMv7a])
 fi
 
 AC_ARG_ENABLE(armv7a-pmccntr, [AS_HELP_STRING([--enable-armv7a-pmccntr],[enable the cycle counter on Armv7a via the PMCCNTR register])], have_armv7apmccntr=$enableval)
 if test "$have_armv7apmccntr"x = "yes"x; then
-        AC_DEFINE(HAVE_ARMV7A_PMCCNTR,1,[Define if you have enabled the PMCCNTR cycle counter on ARMv7a])
+	AC_DEFINE(HAVE_ARMV7A_PMCCNTR,1,[Define if you have enabled the PMCCNTR cycle counter on ARMv7a])
 fi
 
 # Check if we have native exp10 and exp10f functions. If not failback to our
@@ -1701,11 +1701,11 @@ if test "$enable_warn" != "no"; then
     # We will do this by hand instead and only default to the macro for unknown compilers
     case "$ax_cv_c_compiler_vendor" in
           gnu | clang)
-	     CFLAGS="$CFLAGS -Wall -Wextra -Wno-unused-parameter -Wshadow"
-	  ;;
+             CFLAGS="$CFLAGS -Wall -Wextra -Wno-unused-parameter -Wshadow"
+          ;;
 	  intel)
-	     CFLAGS="$CFLAGS -w2 -Wunused-variable -Wshadow"
-	  ;;
+             CFLAGS="$CFLAGS -w2 -Wunused-variable -Wshadow"
+          ;;
 	  *)
 	     AX_CFLAGS_WARN_ALL
 	  ;;
@@ -1715,8 +1715,8 @@ if test "$enable_warn" != "no"; then
     if test "$enable_warn" = "error"; then
        case "$ax_cv_c_compiler_vendor" in
           intel | gnu | clang)
-	     CFLAGS="$CFLAGS -Werror"
-	  ;;
+             CFLAGS="$CFLAGS -Werror"
+          ;;
        esac
     fi
 
@@ -1732,46 +1732,46 @@ fi
 if test "$have_numa" != "no"; then
     if test "x$with_numa" != "xyes" -a "x$with_numa" != "x"; then
         case "$CFLAGS" in
-	    *strict-prototypes*)
-	        NUMA_INCS="-isystem$with_numa/include"
-		# This may still fail if CPATH is used, so we check if the
-		# headers are usable.
-		AS_UNSET(ac_cv_header_numa_h)
-		old_CPPFLAGS="$CPPFLAGS"
-		CPPFLAGS="$CPPFLAGS $NUMA_INCS"
-		numa_failed="no"
-		AC_CHECK_HEADER([numa.h],[numa_failed="no"],
-		                [numa_failed="yes"])
-				if test "$numa_failed" = "yes"; then
-		    AC_MSG_ERROR([Failed to compile the numa.h header file: you may need to set --enable-compiler-warnings to yes or no])
-		fi
-		CPPFLAGS="$old_CPPFLAGS"
-		;;
-	    *)
-	        NUMA_INCS="-I$with_numa/include"
-		;;
-	esac
+            *strict-prototypes*)
+                NUMA_INCS="-isystem$with_numa/include"
+                # This may still fail if CPATH is used, so we check if the
+                # headers are usable.
+                AS_UNSET(ac_cv_header_numa_h)
+                old_CPPFLAGS="$CPPFLAGS"
+                CPPFLAGS="$CPPFLAGS $NUMA_INCS"
+                numa_failed="no"
+                AC_CHECK_HEADER([numa.h],[numa_failed="no"],
+                                [numa_failed="yes"])
+                if test "$numa_failed" = "yes"; then
+                    AC_MSG_ERROR([Failed to compile the numa.h header file: you may need to set --enable-compiler-warnings to yes or no])
+                fi
+                CPPFLAGS="$old_CPPFLAGS"
+            ;;
+            *)
+                NUMA_INCS="-I$with_numa/include"
+            ;;
+        esac
    fi
 fi
 AC_SUBST([NUMA_INCS])
 
 
-# Second part of the Sundials library checks.
-# We now decide if we need to use -isystem to
-# get around the strict-prototypes problem. Assumes
+# Second part of the Sundials library checks. 
+# We now decide if we need to use -isystem to 
+# get around the strict-prototypes problem. Assumes 
 # isystem is available when strict-prototypes is.
 if test "x$with_sundials" != "xno"; then
    if test "x$with_sundials" != "xyes" -a "x$with_sundials" != "x"; then
         case "$CFLAGS" in
-	    *strict-prototypes*)
+            *strict-prototypes*)
 	        SUNDIALS_INCS="-isystem$with_sundials/include"
-		;;
-	    *)
-	        SUNDIALS_INCS="-I$with_sundials/include"
-		;;
-	esac
+            ;;
+            *)
+                SUNDIALS_INCS="-I$with_sundials/include"
+            ;;
+        esac
    fi
-fi
+fi 
 AC_SUBST([SUNDIALS_INCS])
 
 
@@ -2300,8 +2300,8 @@ if test "$with_chemistry" != "none"; then
    if test "$enable_hand_vec" = "yes"; then
       if test "$enable_vec" = "yes"; then
          if test "$with_hydro" = "gadget2"; then
-	    AC_MSG_ERROR([Cannot run with hand vectorisation and chemistry yet. Please use --disable-hand-vec])
-	 fi
+            AC_MSG_ERROR([Cannot run with hand vectorisation and chemistry yet. Please use --disable-hand-vec])
+         fi
       fi
    fi
 fi
@@ -2526,19 +2526,19 @@ esac
 
 # For models using ray-based feedback, let the users set different numbers of rays
 AC_ARG_WITH([number-of-SNII-rays],
-            [AS_HELP_STRING([--with-number-of-SNII-rays], [Number of rays to use for the SNII feedback (default: 1)])],
+	    [AS_HELP_STRING([--with-number-of-SNII-rays], [Number of rays to use for the SNII feedback (default: 1)])],
 	    [with_number_of_SNII_rays="$withval"],
 	    [with_number_of_SNII_rays="1"])
 AC_DEFINE_UNQUOTED([FEEDBACK_NR_RAYS_SNII], [$with_number_of_SNII_rays], [Number of rays to use for the SNII feedback])
 
 AC_ARG_WITH([number-of-SNIa-rays],
-            [AS_HELP_STRING([--with-number-of-SNIa-rays], [Number of rays to use for the SNIa feedback (default: 1)])],
+	    [AS_HELP_STRING([--with-number-of-SNIa-rays], [Number of rays to use for the SNIa feedback (default: 1)])],
 	    [with_number_of_SNIa_rays="$withval"],
 	    [with_number_of_SNIa_rays="1"])
 AC_DEFINE_UNQUOTED([FEEDBACK_NR_RAYS_SNIa], [$with_number_of_SNIa_rays], [Number of rays to use for the SNIa feedback])
 
 AC_ARG_WITH([number-of-AGN-rays],
-            [AS_HELP_STRING([--with-number-of-AGN-rays], [Number of rays to use for the AGN feedback (default: 50)])],
+	    [AS_HELP_STRING([--with-number-of-AGN-rays], [Number of rays to use for the AGN feedback (default: 50)])],
 	    [with_number_of_AGN_rays="$withval"],
 	    [with_number_of_AGN_rays="50"])
 AC_DEFINE_UNQUOTED([FEEDBACK_NR_RAYS_AGN], [$with_number_of_AGN_rays], [Number of rays to use for the AGN feedback])
@@ -2658,9 +2658,9 @@ case "$with_potential" in
 esac
 
 #  Entropy floor
-AC_ARG_WITH([entropy-floor],
+AC_ARG_WITH([entropy-floor], 
     [AS_HELP_STRING([--with-entropy-floor=<floor>],
-       [entropy floor @<:@none, QLA, EAGLE, default: none@:>@]
+       [entropy floor @<:@none, QLA, EAGLE, default: none@:>@] 
     )],
     [with_entropy_floor="$withval"],
     [with_entropy_floor="none"]
@@ -2686,10 +2686,10 @@ case "$with_entropy_floor" in
    *)
       AC_MSG_ERROR([Unknown entropy floor model])
    ;;
-esac
+esac 
 
 #  Pressure floor
-AC_ARG_WITH([pressure-floor],
+AC_ARG_WITH([pressure-floor], 
     [AS_HELP_STRING([--with-pressure-floor=<floor>],
        [pressure floor @<:@none, GEAR, default: none@:>@
        The hydro model needs to be compatible.]
@@ -2715,12 +2715,12 @@ case "$with_pressure_floor" in
    *)
       AC_MSG_ERROR([Unknown pressure floor model])
    ;;
-esac
+esac 
 
 #  Star formation
-AC_ARG_WITH([star-formation],
+AC_ARG_WITH([star-formation], 
     [AS_HELP_STRING([--with-star-formation=<sfm>],
-       [star formation @<:@none, QLA, EAGLE, GEAR, default: none@:>@]
+       [star formation @<:@none, QLA, EAGLE, GEAR, default: none@:>@] 
     )],
     [with_star_formation="$withval"],
     [with_star_formation="none"]
@@ -2749,7 +2749,7 @@ case "$with_star_formation" in
    *)
       AC_MSG_ERROR([Unknown star formation model])
    ;;
-esac
+esac 
 
 AC_ARG_WITH([gadget2-physical-constants],
     [AS_HELP_STRING([--with-gadget2-physical-constants],
@@ -2775,7 +2775,7 @@ AC_DEFINE_UNQUOTED([SELF_GRAVITY_MULTIPOLE_ORDER], [$with_multipole_order], [Mul
 #  Radiative transfer scheme
 AC_ARG_WITH([rt],
    [AS_HELP_STRING([--with-rt=<scheme>],
-      [Radiative transfer scheme to use @<:@none, GEAR_*, SPHM1RT_*, debug default: none@:>@.
+      [Radiative transfer scheme to use @<:@none, GEAR_*, SPHM1RT_*, debug default: none@:>@. 
       For GEAR and SPHM1RT, the number of photon groups (e.g. GEAR_4) needs to be provided.]
    )],
    [with_rt="$withval"],
@@ -2785,7 +2785,7 @@ AC_ARG_WITH([rt],
 # For GEAR-RT scheme: Select a RT Riemann solver
 AC_ARG_WITH([rt-riemann-solver],
    [AS_HELP_STRING([--with-rt-riemann-solver=<scheme>],
-      [Riemann solver for the moments of the ratiadiative transfer equation with the M1 closure to use @<:@none, HLL, GLF, default: none@:>@.
+      [Riemann solver for the moments of the ratiadiative transfer equation with the M1 closure to use @<:@none, HLL, GLF, default: none@:>@. 
       For the GEAR RT scheme, you need to select one Riemann solver.]
    )],
    [with_rt_riemann_solver="$withval"],
@@ -2795,16 +2795,16 @@ AC_ARG_WITH([rt-riemann-solver],
 case "$with_rt_riemann_solver" in
     none)
         AC_DEFINE([RT_RIEMANN_SOLVER_NONE], [1], [No RT riemann solver])
-	;;
+        ;;
     HLL)
         AC_DEFINE([RT_RIEMANN_SOLVER_HLL], [1], [HLL RT riemann solver])
-	;;
+        ;;
     GLF)
         AC_DEFINE([RT_RIEMANN_SOLVER_GLF], [1], [GLF RT riemann solver])
-	;;
+        ;;
     *)
         AC_MSG_ERROR("Unknown RT Riemann solver: $with_rt_riemann_solver")
-	;;
+        ;;
 esac
 
 case "$with_rt" in
@@ -2821,8 +2821,8 @@ case "$with_rt" in
       fi
       if ! test $number_group -eq $number_group; then
           # abuse -eq to check whether $number_group is an integer. -eq
-	  # only works with those.
-	  AC_MSG_ERROR([GEAR-RT: Cannot work with non-integer photon groups])
+          # only works with those.
+          AC_MSG_ERROR([GEAR-RT: Cannot work with non-integer photon groups])
       fi
 
       if test "$enable_debugging_checks" = "yes"; then
@@ -2859,13 +2859,13 @@ case "$with_rt" in
       fi
       if ! test $number_group -eq $number_group; then
           # abuse -eq to check whether $number_group is an integer. -eq
-	  # only works with those.
-	  AC_MSG_ERROR([SPHM1RT: Cannot work with non-integer photon groups])
+          # only works with those.
+          AC_MSG_ERROR([SPHM1RT: Cannot work with non-integer photon groups])
       fi
       AC_MSG_CHECKING([for Sundials libraries])
       AC_MSG_RESULT($have_sundials)
-      if test "$have_sundials" != "yes"; then
-         AC_MSG_ERROR([The Sundials library is not present. Sundials is required for the SPHM1RT module.])
+      if test "$have_sundials" != "yes"; then 
+         AC_MSG_ERROR([The Sundials library is not present. Sundials is required for the SPHM1RT module.]) 
       fi
    ;;
    *)
@@ -2997,8 +2997,8 @@ AC_MSG_RESULT([
    HDF5 enabled         : $with_hdf5
     - parallel          : $have_parallel_hdf5
    METIS/ParMETIS       : $have_metis / $have_parmetis
-   FFTW3 enabled        : $have_fftw
-    - threaded/openmp   : $have_threaded_fftw / $have_openmp_fftw
+   FFTW3 enabled        : $have_fftw   
+    - threaded/openmp   : $have_threaded_fftw / $have_openmp_fftw 
     - MPI               : $have_mpi_fftw
     - ARM               : $have_arm_fftw
    GSL enabled          : $have_gsl
@@ -3040,7 +3040,7 @@ AC_MSG_RESULT([
    Black holes model    : $with_black_holes
    Radiative transfer   : $with_rt
    Extra i/o            : $with_extra_io
-
+   
    Atomic operations in tasks  : $enable_atomics_within_tasks
    Individual timers           : $enable_timers
    Task debugging              : $enable_task_debugging
