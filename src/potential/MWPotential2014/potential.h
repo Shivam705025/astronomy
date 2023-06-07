@@ -361,20 +361,29 @@ static INLINE void potential_init_backend(
   const int useabspos = parser_get_param_int(
       parameter_file, "MWPotential2014Potential:useabspos");
   
-  /* Define the default value */
+  /* System of units for the parameters (1 Msun, 1 kpc, 1 km/s, 0.98 Gyr) */
+  struct unit_system us_msun_kpc ; 
+  static const double U_M_in_cgs = 1.988409870698051e+33 ; //Msun in g
+  static const double U_L_in_cgs = 3.0856775814913673e+21 ; //kpc in cm
+  static const double U_t_in_cgs = 3.085677581491367e+16 ; //0.98 Gyr in s
+  static const double U_C_in_cgs = 1.0 ; // C
+  static const double U_T_in_cgs = 1.0 ; // K
+  units_init(&us_msun_kpc, U_M_in_cgs, U_L_in_cgs, U_t_in_cgs, U_C_in_cgs, U_T_in_cgs) ; 
+  
+  /* Define the default value in the above system of units*/
   static const double c_200_default = 9.823403437774843;
-  static const double M_200_default = 147.41031542774076; // 10^10 M_sol
-  static const double H_default = 0.12779589797702284; 
-  static const double Mdisk_default = 6.8; // 10^10 M_sol
-  static const double Rdisk_default = 3.0; // kpc
-  static const double Zdisk_default = 0.280; // kpc
-  static const double amplitude_default = 1.0;
-  static const double r_1_default = 1.0;
-  static const double alpha_default = 1.8;
-  static const double r_c_default = 1.9;
-  potential->f[0] = 0.4367419745056084;
-  potential->f[1] = 1.002641971008805;
-  potential->f[2] = 0.022264787598364262;
+  static const double M_200_Msun_default = 147.41031542774076e10; // M_sun
+  static const double H_default = 127.78254614201471; //km/s/Mpc
+  static const double Mdisk_Msun_default = 6.8e10; // M_sun
+  static const double Rdisk_kpc_default = 3.0; // kpc
+  static const double Zdisk_kpc_default = 0.280; // kpc
+  static const double amplitude_default = 1.0; //no unit
+  static const double r_1_kpc_default = 1.0; //kpc
+  static const double alpha_default = 1.8; //no unit
+  static const double r_c_kpc_default = 1.9; //kpc
+  potential->f[0] = 0.4367419745056084; //no unit
+  potential->f[1] = 1.002641971008805; //no unit
+  potential->f[2] = 0.022264787598364262; //no unit
   
   if (!useabspos) {
     potential->x[0] += s->dim[0] / 2.;
@@ -388,27 +397,39 @@ static INLINE void potential_init_backend(
   potential->c_200 = parser_get_opt_param_double(
       parameter_file, "MWPotential2014Potential:concentration", c_200_default);
   potential->M_200 = parser_get_opt_param_double(
-      parameter_file, "MWPotential2014Potential:M_200", M_200_default);
+      parameter_file, "MWPotential2014Potential:M_200_Msun", M_200_Msun_default);
   potential->H = parser_get_opt_param_double(
       parameter_file, "MWPotential2014Potential:H", H_default);
   potential->Mdisk = parser_get_opt_param_double(
-      parameter_file, "MWPotential2014Potential:Mdisk", Mdisk_default);
+      parameter_file, "MWPotential2014Potential:Mdisk_kpc", Mdisk_Msun_default);
   potential->Rdisk = parser_get_opt_param_double(
-      parameter_file, "MWPotential2014Potential:Rdisk", Rdisk_default);
+      parameter_file, "MWPotential2014Potential:Rdisk_kpc", Rdisk_kpc_default);
   potential->Zdisk = parser_get_opt_param_double(
-      parameter_file, "MWPotential2014Potential:Zdisk", Zdisk_default);
+      parameter_file, "MWPotential2014Potential:Zdisk_kpc", Zdisk_kpc_default);
   potential->amplitude = parser_get_opt_param_double(
       parameter_file, "MWPotential2014Potential:amplitude", amplitude_default);
   potential->r_1 =
-      parser_get_opt_param_double(parameter_file, "MWPotential2014Potential:r_1", r_1_default);
+      parser_get_opt_param_double(parameter_file, "MWPotential2014Potential:r_1_kpc", r_1_kpc_default);
   potential->alpha = parser_get_opt_param_double(
       parameter_file, "MWPotential2014Potential:alpha", alpha_default);
   potential->r_c =
-      parser_get_opt_param_double(parameter_file, "MWPotential2014Potential:r_c", r_c_default);
+      parser_get_opt_param_double(parameter_file, "MWPotential2014Potential:r_c_kpc", r_c_kpc_default);
   parser_get_opt_param_double_array(parameter_file,
                                 "MWPotential2014Potential:potential_factors",
                                 3, potential->f);
   potential->eps = 0.05;
+  
+  /*Conversion from the above system of units to internal units (variable us) */
+  double unit_conv_mass = units_conversion_factor(&us_msun_kpc, us, UNIT_CONV_MASS) ;
+  double unit_conv_length =units_conversion_factor(&us_msun_kpc, us, UNIT_CONV_LENGTH) ;
+  double unit_conv_velocity =units_conversion_factor(&us_msun_kpc, us, UNIT_CONV_VELOCITY) ; 
+  
+  potential->M_200 *= unit_conv_mass ;
+  potential->H *= unit_conv_velocity/(unit_conv_length*1e3) ; //Notice the above units are [kpc] and H is in [km/s/Mpc]
+  potential->Mdisk *= unit_conv_mass ;
+  potential->Rdisk *= unit_conv_length ;
+  potential->r_1 *= unit_conv_length ;
+  potential->r_c *= unit_conv_length ;
   
   /* Compute rho_c */
   const double rho_c = 3.0 * potential->H * potential->H / (8.0 * M_PI * phys_const->const_newton_G);
