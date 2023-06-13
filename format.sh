@@ -2,22 +2,22 @@
 
 CLANG_FORMAT_VERSION="16.0.5"
 
-# Check if we can run pip
-# This also serves as a check for python3
-python3 -m pip --version > /dev/null
-if [[ $? -ne 0 ]]
-then
-  echo "ERROR: cannot run 'python3 -m pip'"
-  exit 1
-fi
-
-
 # Clang format command, can be overridden using CLANG_FORMAT_CMD.
 # is CLANG_FORMAT_CMD provided? Then use that.
 if [ ! -z ${CLANG_FORMAT_CMD+x} ]
 then
     clang="$CLANG_FORMAT_CMD"
 else
+
+    # Check if we can run pip
+    # This also serves as a check for python3
+    python3 -m pip --version > /dev/null
+    if [[ $? -ne 0 ]]
+    then
+      echo "ERROR: cannot run 'python3 -m pip'"
+      exit 1
+    fi
+
     # Check if the virtual environment exists
     if [ ! -d .formatting_python_env ]
     then
