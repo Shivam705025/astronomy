@@ -36,7 +36,7 @@ then
 fi
 
 # Check that we have the correct version
-$black --version | /usr/bin/grep "$BLACK_VERSION" >> /dev/null
+$black --version | grep "$BLACK_VERSION" >> /dev/null
 if [ "$?" -eq 1 ]
 then
     echo "Wrong version of black formatter installed. I need" "$BLACK_VERSION"

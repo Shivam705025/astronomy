@@ -16,8 +16,6 @@ fi
 # is CLANG_FORMAT_CMD provided? Then use that.
 if [ ! -z ${CLANG_FORMAT_CMD+x} ]
 then
-    echo GOT THE COMMAND
-    echo $CLANG_FORMAT_CMD
     clang="$CLANG_FORMAT_CMD"
 else
     # Check if the virtual environment exists
@@ -45,7 +43,7 @@ then
 fi
 
 # Check that we have the correct version
-$clang --version | /usr/bin/grep "$CLANG_FORMAT_VERSION" >> /dev/null
+$clang --version | grep "$CLANG_FORMAT_VERSION" >> /dev/null
 if [ "$?" -eq 1 ]
 then
     echo "Wrong version of clang-format installed. I need" "$CLANG_FORMAT_VERSION"
