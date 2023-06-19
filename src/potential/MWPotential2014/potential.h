@@ -428,6 +428,7 @@ static INLINE void potential_init_backend(
   potential->H *= unit_conv_velocity/(unit_conv_length*1e3) ; //Notice the above units are [kpc] and H is in [km/s/Mpc]
   potential->Mdisk *= unit_conv_mass ;
   potential->Rdisk *= unit_conv_length ;
+  potential->Zdisk *= unit_conv_length ;
   potential->r_1 *= unit_conv_length ;
   potential->r_c *= unit_conv_length ;
   
