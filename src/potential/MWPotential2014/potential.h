@@ -487,14 +487,15 @@ static INLINE void potential_print_backend(
     const struct external_potential* potential) {
 
   message(
-      "External potential is 'MWPotential2014 (NFW + MN disk + PSC bulge)' "
-      "with properties are "
+      "External potential is 'MWPotential2014' "
+      "with properties (in internal units) are "
       "(x,y,z) = "
-      "(%e, %e, %e), scale radius = %e power exponent = %e cut-off = %e "
-      "timestep "
+      "(%e, %e, %e), c_200 = %e, M_200 = %e, H = %e, M_disk = %e, R_disk = %e, "
+      "z_disk = %e, amplitude = %e, r_1 = %e, alpha = %e, r_c = %e, timestep "
       "multiplier = %e mintime = %e",
-      potential->x[0], potential->x[1], potential->x[2], potential->r_s,
-      potential->alpha, potential->r_c, potential->timestep_mult,
+      potential->x[0], potential->x[1], potential->x[2], potential->c_200, potential->M_200, 
+      potential->H, potential->Mdisk, potential->Rdisk, potential->Zdisk, potential->amplitude,
+      potential->r_1, potential->alpha, potential->r_c, potential->timestep_mult,
       potential->mintime);
 }
 
