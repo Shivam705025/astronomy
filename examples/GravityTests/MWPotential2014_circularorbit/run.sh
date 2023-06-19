@@ -1,11 +1,21 @@
 #!/bin/bash
 
 #Creates a directory for the outputs
-DIR=output
+DIR=output_1 #First test of units conversion
 if [ -d "$DIR" ];
 then
     echo "$DIR directory exists. Its content will be removed."
-    rm output/output_*
+    rm $DIR/output_*
+else
+    echo "$DIR directory does not exists. It will be created."
+    mkdir $DIR
+fi
+
+DIR=output_2 #Second test of units conversion
+if [ -d "$DIR" ];
+then
+    echo "$DIR directory exists. Its content will be removed."
+    rm $DIR/output_*
 else
     echo "$DIR directory does not exists. It will be created."
     mkdir $DIR
@@ -45,8 +55,12 @@ fi
 
 #Runs the simulation
 # self gravity G, external potential g, hydro s, threads t and high verbosity v
-echo "Starting the simulation... Look at output.log for the simulation details."
-../../../swift --external-gravity --threads=8 MWPotential2014_circular_orbits.yml 2>&1 > output.log
+echo "Starting the simulation with the first type of units (kpc)... Look at output_1.log for the simulation details."
+../../../swift --external-gravity --threads=8 params_unit_1.yml 2>&1 > output_1.log
+echo "Simulation ended."
+
+echo "Starting the simulation with the second type of units (Mpc)... Look at output_2.log for the simulation details."
+../../../swift --external-gravity --threads=8 params_unit_2.yml 2>&1 > output_2.log
 echo "Simulation ended."
 
 #Saves the plots
