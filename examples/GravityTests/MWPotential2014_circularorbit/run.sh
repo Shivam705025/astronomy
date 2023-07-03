@@ -23,19 +23,33 @@ fi
 
 #Clears the previous figures
 echo "Clearing existing figures."
-if [ -f "circular_orbits.png" ];
+if [ -f "circular_orbits_simulation_kpc.png" ];
 then
-    rm circular_orbits.png
+    rm circular_orbits_simulation_kpc.png
 fi
 
-if [ -f "deviation.png" ];
+if [ -f "circular_orbits_simulation_Mpc.png" ];
 then
-    rm deviation.png
+    rm circular_orbits_simulation_Mpc.png
 fi
 
-if [ -f "deviation_from_original_data.png" ];
+if [ -f "deviation_simulation_kpc.png" ];
 then
-    rm deviation_from_original_data.png
+    rm deviation_simulation_kpc.png
+fi
+if [ -f "deviation_simulation_Mpc.png" ];
+then
+    rm deviation_simulation_Mpc.png
+fi
+
+if [ -f "deviation_from_original_data_simulation_kpc.png" ];
+then
+    rm deviation_from_original_data_simulation_kpc.png
+fi
+
+if [ -f "deviation_from_original_data_simulation_Mpc.png" ];
+then
+    rm deviation_from_original_data_simulation_Mpc.png
 fi
 
 #Clears the IC file
