@@ -836,7 +836,7 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
   /* If we are in the thick disc mode, suppress the accretion rate by the
    * accretion efficiency. */
   if (bp->accretion_mode == BH_thick_disc) {
-    accr_rate*= props->accretion_efficiency;
+    accr_rate *= props->accretion_efficiency;
     bp->accretion_rate *= props->accretion_efficiency;
     bp->eddington_fraction *= props->accretion_efficiency;
   }
@@ -962,11 +962,11 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
 
   /* Update the spin */
   bp->spin = spin_final;
-    
+
   /* Update other quantities */
   bp->accretion_disk_angle = dot_product;
   bp->aspect_ratio = aspect_ratio(bp, constants, props);
-    
+
   /* Update efficiencies given the new spin */
   bp->radiative_efficiency = rad_efficiency(bp, props);
   bp->jet_efficiency = jet_efficiency(bp, props);
@@ -976,7 +976,7 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
 
   /* Final luminosity at the end of the step */
   luminosity = bp->radiative_efficiency * accr_rate * c * c;
-    
+
   /* The amount of mass the BH is actually swallowing, including the
      effects of the updated efficiencies. */
   const double delta_m_real =
@@ -987,7 +987,7 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
       delta_m_0 * c * c * props->eps_f_jet * jet_efficiency(bp, props);
   bp->energy_reservoir +=
       delta_m_0 * c * c * props->epsilon_f * rad_efficiency(bp, props);
-    
+
   /* Update the masses */
   bp->subgrid_mass += delta_m_real;
   bp->total_accreted_mass += delta_m_real;
@@ -1305,24 +1305,23 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
   /* Decide the accretion mode of the BH, based on the new spin and Eddington
    * fraction */
   decide_mode(bp, props);
-    
+
   /* The accretion/feedback mode is now possibly different, so the feedback
-     efficiencies need to be updated. This is important for computing the 
+     efficiencies need to be updated. This is important for computing the
      next time-step of the BH. */
   bp->radiative_efficiency = rad_efficiency(bp, props);
   bp->jet_efficiency = jet_efficiency(bp, props);
 
-
   /* Calculate a BH angular momentum evolution time step. Two conditions are
      used, one ensures that the BH spin changes by a small amount over the
-     next time-step, while the other ensures that the spin is not wildly 
+     next time-step, while the other ensures that the spin is not wildly
      redirected between two time-steps */
   if ((fabsf(bp->spin) > 0.01) && (bp->accretion_rate > 0.)) {
-      
+
     /* How much do we want to allow the spin to change over the next time-
-       step? If the spin is large (above 0.1 in magnitude), we allow it 
+       step? If the spin is large (above 0.1 in magnitude), we allow it
        to only change by 1% of its current value. If it is small, we instead
-       use a fixed increment of 0.01. This is to prevent the code from 
+       use a fixed increment of 0.01. This is to prevent the code from
        becoming very slow. */
     const float spin_magnitude = fabsf(bp->spin);
     float epsilon_spin = 0.01;
@@ -1330,26 +1329,34 @@ __attribute__((always_inline)) INLINE static void black_holes_prepare_feedback(
       epsilon_spin = 0.01 * spin_magnitude;
     }
     float dt_ang_mom = epsilon_spin /
-                             fabsf(da_dln_mbh_0(bp, constants, props)) *
-                             bp->subgrid_mass / bp->accretion_rate;
-      
-    /* We now compute the angular-momentum (direction) time-step. We allow 
+                       fabsf(da_dln_mbh_0(bp, constants, props)) *
+                       bp->subgrid_mass / bp->accretion_rate;
+
+    /* We now compute the angular-momentum (direction) time-step. We allow
        the anticipated warp angular momentum along the direction perpendicular
-       to the current spin vector to be 10% of the current BH angular momentum, 
+       to the current spin vector to be 10% of the current BH angular momentum,
        which should correspond to a change of direction of around 5 degrees. We
-       also apply this only if the spin is not low. */  
+       also apply this only if the spin is not low. */
     if (spin_magnitude > 0.1) {
-        
-      /* Angular momentum direction of gas in kernel along the direction of 
+
+      /* Angular momentum direction of gas in kernel along the direction of
          the current spin vector */
-      const float cosine = (bp->spec_angular_momentum_gas[0] * bp->angular_momentum_direction[0] + bp->spec_angular_momentum_gas[1] * bp->angular_momentum_direction[1] + bp->spec_angular_momentum_gas[2] * bp->angular_momentum_direction[2]) / spec_ang_mom_norm; 
+      const float cosine = (bp->spec_angular_momentum_gas[0] *
+                                bp->angular_momentum_direction[0] +
+                            bp->spec_angular_momentum_gas[1] *
+                                bp->angular_momentum_direction[1] +
+                            bp->spec_angular_momentum_gas[2] *
+                                bp->angular_momentum_direction[2]) /
+                           spec_ang_mom_norm;
       /* Compute sine, i.e. the componenent perpendicular to that. */
       const float sine = fmaxf(0., sqrtf(1. - cosine * cosine));
-      
-      const float dt_redirection = 0.1 * m_warp(bp, constants, props) / bp->accretion_rate * j_BH(bp, constants) / j_warp(bp, constants, props) / sine;
+
+      const float dt_redirection = 0.1 * m_warp(bp, constants, props) /
+                                   bp->accretion_rate * j_BH(bp, constants) /
+                                   j_warp(bp, constants, props) / sine;
       dt_ang_mom = min(dt_ang_mom, dt_redirection);
     }
-    
+
     bp->dt_ang_mom = dt_ang_mom;
   } else {
     bp->dt_ang_mom = FLT_MAX;
